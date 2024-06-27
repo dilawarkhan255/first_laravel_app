@@ -12,6 +12,11 @@ class JobListing extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'title', 'company', 'designation', 'location', 'description'
+        'title', 'company', 'designation_id', 'location', 'description'
     ];
+
+    public function designation()
+    {
+        return $this->belongsTo(JobDesignation::class, 'designation_id');
+    }
 }

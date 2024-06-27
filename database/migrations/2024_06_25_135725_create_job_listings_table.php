@@ -17,7 +17,7 @@ class CreateJobListingsTable extends Migration
             $table->id();
             $table->string('title');
             $table->string('company');
-            $table->string('designation');
+            $table->integer('designation_id');
             $table->text('description');
             $table->string('location');
             $table->timestamps();

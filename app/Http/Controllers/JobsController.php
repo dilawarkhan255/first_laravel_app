@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JobDesignation;
 use Illuminate\Http\Request;
 use App\Models\JobListing;
 
@@ -15,7 +16,7 @@ class JobsController extends Controller
 
     public function index()
     {
-        $jobs = JobListing::all();
+        $jobs = JobListing::with('designation')->get(); // Eager load 'designation' relationship
         return view('index', ['jobs' => $jobs]);
     }
 
@@ -26,7 +27,11 @@ class JobsController extends Controller
 
     public function create()
     {
-        return view('create');
+        $jobDesignations = JobDesignation::all(); // Fetch all designations
+
+        return view('create', [
+            'jobDesignations' => $jobDesignations
+        ]);
     }
 
     public function store(Request $request)
@@ -34,7 +39,7 @@ class JobsController extends Controller
         $request->validate([
             'title' => 'required|max:255',
             'company' => 'required|max:255',
-            'designation' => 'required|max:255',
+            // 'designation' => 'required|max:255',
             'description' => 'required',
             'location' => 'required|max:255',
         ]);
@@ -46,7 +51,8 @@ class JobsController extends Controller
 
     public function edit(JobListing $job)
     {
-        return view('edit', ['job' => $job]);
+        $designations = JobDesignation::all(); // Assuming you have a Designation model to fetch the list of designations
+        return view('edit', ['job' => $job, 'designations' => $designations]);
     }
 
     public function update(Request $request, JobListing $job)
@@ -54,7 +60,7 @@ class JobsController extends Controller
         $request->validate([
             'title' => 'required|max:255',
             'company' => 'required|max:255',
-            'designation' => 'required|max:255',
+            // 'designation' => 'required|max:255',
             'description' => 'required',
             'location' => 'required|max:255',
         ]);

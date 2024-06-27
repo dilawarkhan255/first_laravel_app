@@ -25,27 +25,24 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($jobs as $job)
-                    <tr>
-                        <td>{{ $job->title }}</td>
-                        <td>{{ $job->company }}</td>
-                        <td>{{ $job->designation }}</td>
-                        <td>
-                            <!-- Button to trigger modal -->
-                            <i class="fas fa-info-circle" onclick="showDescription('{{ $job->description }}')" style="cursor: pointer;"></i>
-                        </td>
-                        <td>{{ $job->location }}</td>
-                        <td>
-                            <a href="{{ route('show', ['job' => $job->id]) }}"  title="View"><i class="fa-solid fa-eye" style="color: #000000;"></i></a>
-                            <a href="{{ route('edit', ['job' => $job->id]) }}"  title="Edit"><i class="fa-solid fa-pen-to-square" style="color: #000000;"></i></a>
-                            <form action="{{ route('destroy', ['job' => $job->id]) }}" method="POST" style="display: inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"><i class="fa-solid fa-trash"></i></button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
+            @foreach ($jobs as $job)
+                <tr>
+                    <td>{{ $job->title }}</td>
+                    <td>{{ $job->company }}</td>
+                    <td>{{ $job->designation->name }}</td> <!-- Display designation name -->
+                    <td>{!! $job->description !!}</td>
+                    <td>{{ $job->location }}</td>
+                    <td>
+                        <a href="{{ route('show', ['job' => $job->id]) }}" title="View"><i class="fa-solid fa-eye" style="color: #000000;"></i></a>
+                        <a href="{{ route('edit', ['job' => $job->id]) }}" title="Edit"><i class="fa-solid fa-pen-to-square" style="color: #000000;"></i></a>
+                        <form action="{{ route('destroy', ['job' => $job->id]) }}" method="POST" style="display: inline;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"><i class="fa-solid fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+            @endforeach
             </tbody>
         </table>
     </div>

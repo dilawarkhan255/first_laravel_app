@@ -39,7 +39,13 @@
                             </div>
                             <div class="form-group">
                                 <label for="designation">Designation</label>
-                                <input type="text" class="form-control" id="designation" name="designation" value="{{ $job->designation }}" required>
+                                <select class="form-control" id="designation" name="designation_id" required>
+                                    @foreach($designations as $designation)
+                                        <option value="{{ $designation->id }}" {{ $designation->id == $job->designation_id ? 'selected' : '' }}>
+                                            {{ $designation->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="description">Description</label>

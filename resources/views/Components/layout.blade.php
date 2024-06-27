@@ -20,6 +20,7 @@
             <div class="ml-10 flex items-baseline space-x-4">
               <a href="/jobs/home" class="rounded-md {{ Request::is('jobs/home') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" aria-current="page" style="text-decoration:none;">Home</a>
               <a href="/jobs" class="rounded-md {{ Request::is('jobs') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" style="text-decoration:none;">Jobs</a>
+              <a href="/designations" class="rounded-md {{ Request::is('designations') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" style="text-decoration:none;">Job Designations</a>
             </div>
             @endauth
           </div>

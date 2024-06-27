@@ -37,8 +37,15 @@
                                 <input type="text" class="form-control" id="company" name="company" required>
                             </div>
                             <div class="form-group">
-                                <label for="designation">Designation</label>
-                                <input type="text" class="form-control" id="designation" name="designation" required>
+                                <label for="designation_id">Designation</label>
+                                <select class="form-control" id="designation_id" name="designation_id" required>
+                                    <option value="">Select Designation</option>
+                                    @foreach ($jobDesignations as $designation)
+                                    <tr>
+                                        <td>{{ $designation->name }}</td>
+                                    </tr>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="description">Description</label>

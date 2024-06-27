@@ -24,11 +24,11 @@
                                 </tr>
                                 <tr>
                                     <th scope="row">Designation</th>
-                                    <td>{{ $job->designation }}</td>
+                                    <td>{{ $job->designation->name  }}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Description</th>
-                                    <td>{{ $job->description }}</td>
+                                    <td>{!! $job->description !!}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Location</th>
