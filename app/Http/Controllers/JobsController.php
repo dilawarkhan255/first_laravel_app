@@ -25,13 +25,11 @@ class JobsController extends Controller
         return view('show', ['job' => $job]);
     }
 
-    public function create()
+    public function create(JobListing $job)
     {
-        $jobDesignations = JobDesignation::all(); // Fetch all designations
+        $designations = JobDesignation::all(); // Fetch all designations
 
-        return view('create', [
-            'jobDesignations' => $jobDesignations
-        ]);
+        return view('create', ['job' => $job, 'designations' => $designations]);
     }
 
     public function store(Request $request)

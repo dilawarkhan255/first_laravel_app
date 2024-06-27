@@ -40,10 +40,10 @@
                                 <label for="designation_id">Designation</label>
                                 <select class="form-control" id="designation_id" name="designation_id" required>
                                     <option value="">Select Designation</option>
-                                    @foreach ($jobDesignations as $designation)
-                                    <tr>
-                                        <td>{{ $designation->name }}</td>
-                                    </tr>
+                                    @foreach ($designations as $designation)
+                                    <option value="{{ $designation->id }}" {{ $designation->id == $job->designation_id }}>
+                                        {{ $designation->name }}
+                                    </option>
                                     @endforeach
                                 </select>
                             </div>
