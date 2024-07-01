@@ -12,21 +12,23 @@
     @endif
     <div class="container">
         <h1>Job Listings</h1>
-        <table id="jobTable" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Company</th>
-                    <th>Designation</th>
-                    <th>Description</th>
-                    <th>Location</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table id="jobTable" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Company</th>
+                        <th>Designation</th>
+                        <th>Description</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Bootstrap Modal -->
@@ -73,11 +75,11 @@
         }
     </script>
 
-
     <!-- DataTable Initialization Script -->
     <script>
         $(document).ready(function() {
             $('#jobTable').DataTable({
+                responsive: true, // Enable responsiveness
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('jobs.index') }}",
@@ -121,7 +123,6 @@
                                 '</form>';
                         }
                     }
-
                 ]
             });
         });
