@@ -42,7 +42,7 @@
                             </div>
                             <div>
                                 <button type="submit" class="btn btn-primary">Login</button>
-                                <a href="{{ route('index') }}" class="btn btn-secondary ml-2">Back</a>
+                                <a href="{{ route('jobs.index') }}" class="btn btn-secondary ml-2">Back</a>
                             </div>
                         </form>
                     </div>

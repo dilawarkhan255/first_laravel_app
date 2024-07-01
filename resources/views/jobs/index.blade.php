@@ -101,8 +101,8 @@
                             return '<form action="' + row.status_url + '" method="POST" style="display: inline;">' +
                                     '@csrf' +
                                     '@method("PUT")' +
-                                    '<button type="submit" class="btn btn-sm ' + (data ? 'btn-danger' : 'btn-success') + '">' + 
-                                    (data ? 'Disable' : 'Enable') + '</button>' +
+                                    '<button type="submit" class="btn btn-sm ' + (data ? 'btn-success' : 'btn-danger') + '">' + 
+                                    (data ? 'Enable' : 'Disable') + '</button>' +
                                 '</form>';
                         }
                     },
@@ -117,7 +117,7 @@
                                 '<form action="' + row.delete_url + '" method="POST" style="display: inline;">' +
                                 '@csrf' +
                                 '@method("DELETE")' +
-                                '<button type="submit" style="border: none; background-color: transparent; color: #000000; margin-left: 5px;"><i class="fas fa-trash"></i></button>' +
+                                '<i class="fas fa-trash show_confirm" style="cursor: pointer;"></i>' +
                                 '</form>';
                         }
                     }

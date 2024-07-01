@@ -22,7 +22,7 @@ class SessionController extends Controller
 
         if (Auth::attempt($credentials)) {
             // Authentication passed...
-            return redirect()->route('home')->with('success', 'Login successful!');
+            return redirect()->route('jobs.home')->with('success', 'Login successful!');
         }
 
         return back()->withErrors([

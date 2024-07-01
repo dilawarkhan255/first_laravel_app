@@ -21,32 +21,10 @@
                     <table id="designationTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
-                                <th style="width: 70%;">Name</th>
-                                <th style="width: 30%;">Actions</th>
+                                <th style="width: 60%;">Name</th>
+                                <th style="width: 40%;">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach ($jobDesignations as $designation)
-                                <tr>
-                                    <td>{{ $designation->name }}</td>
-                                    <td>
-                                        <div class="d-flex gap-2">
-                                            <a href="{{ route('designations.show', ['jobDesignation' => $designation]) }}" title="View">
-                                                <i class="fa-solid fa-eye" style="color: #000;"></i>
-                                            </a>
-                                            <a href="{{ route('designations.edit', ['jobDesignation' => $designation]) }}" title="Edit">
-                                                <i class="fa-solid fa-pen-to-square" style="color: #000;"></i>
-                                            </a>
-                                            <form action="{{ route('designations.destroy', ['jobDesignation' => $designation]) }}" method="POST" style="display: inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-link p-0" title="Delete"><i class="fa-solid fa-trash" style="color: #000;"></i></button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
                     </table>
                 </div>
             </div>
@@ -65,18 +43,57 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- DataTables JS -->
     <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <!-- SweetAlert JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
 
+     <!-- DataTable Initialization Script -->
     <script>
         $(document).ready(function() {
             $('#designationTable').DataTable({
-                "paging": true,
-                "lengthChange": false,
-                "searching": true,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-                "responsive": true
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('designations.index') }}",
+                columns: [
+                    { data: 'name', name: 'name' }, 
+
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row) {
+                            return '<a href="' + row.show_url + '" title="View"><i class="fas fa-eye" style="color: #000000;"></i></a> ' +
+                                '<a href="' + row.edit_url + '" title="Edit"><i class="fas fa-edit" style="color: #000000; margin-left:3px;"></i></a> ' +
+                                '<form action="' + row.delete_url + '" method="POST" style="display: inline;">' +
+                                '@csrf' +
+                                '@method("DELETE")' +
+                                '<i class="fas fa-trash show_confirm" style="cursor: pointer; color: #000000;"></i>' +
+                                '</form>';
+                        }
+                    }
+                ]
             });
         });
     </script>
+
+
+     <!-- Delete Confirmation Script -->
+    <script>
+        $(document).on('click', '.show_confirm', function(event) {
+            var form =  $(this).closest("form");
+            event.preventDefault();
+            swal({
+                title: "Are you sure you want to delete this record?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    form.submit();
+                }
+            });
+        });
+    </script>
+
 </x-layout>

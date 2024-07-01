@@ -30,11 +30,11 @@
                             @csrf
                             <div class="form-group">
                                 <label for="title">Title</label>
-                                <input type="text" class="form-control" id="title" name="title" required>
+                                <input type="text" class="form-control" id="title" name="title"  placeholder="Enter Job Title" required>
                             </div>
                             <div class="form-group">
                                 <label for="company">Company</label>
-                                <input type="text" class="form-control" id="company" name="company" required>
+                                <input type="text" class="form-control" id="company" name="company" placeholder="Enter Company Name" required>
                             </div>
                             <div class="form-group">
                                 <label for="designation_id">Designation</label>
@@ -53,7 +53,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="location">Location</label>
-                                <input type="text" class="form-control" id="location" name="location" required>
+                                <input type="text" class="form-control" id="location" name="location" placeholder="Enter Location" required>
                             </div>
                             <div>
                                 <button type="submit" class="btn btn-primary">Create</button>

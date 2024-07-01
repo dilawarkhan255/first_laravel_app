@@ -12,7 +12,7 @@ class JobsController extends Controller
 {
     public function home()
     {
-        return view('home');
+        return view('jobs.home');
     }
 
     // public function index(Job_ListingDataTable $dataTable)

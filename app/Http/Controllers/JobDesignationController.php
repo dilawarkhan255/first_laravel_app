@@ -4,14 +4,43 @@ namespace App\Http\Controllers;
 
 use App\Models\JobDesignation;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
+
 
 class JobDesignationController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     $jobDesignations = JobDesignation::all();
+    //     return view('designations.index', ['jobDesignations' => $jobDesignations]);
+    // }
+
+    public function index(Request $request)
     {
-        $jobDesignations = JobDesignation::all();
-        return view('designations.index', ['jobDesignations' => $jobDesignations]);
+        if ($request->ajax()) {
+            $jobDesignation = JobDesignation::select('*');
+
+            return DataTables::of($jobDesignation)
+                ->addColumn('show_url', function($row){
+                    return route('designations.show', ['jobDesignation' => $row->id]);
+                })
+                ->addColumn('edit_url', function($row){
+                    return route('designations.edit', ['jobDesignation' => $row->id]);
+                })
+                ->addColumn('delete_url', function($row){
+                    return route('designations.destroy', ['jobDesignation' => $row->id]);
+                })
+                ->addColumn('action', function($row){
+                    return '';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('designations.index');
     }
+
+    
 
     public function show(JobDesignation $jobDesignation)
     {

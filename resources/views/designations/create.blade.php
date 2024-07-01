@@ -30,7 +30,7 @@
                             @csrf
                             <div class="form-group">
                                 <label for="title">Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter Designation Name" required>
                             </div>
                             <div>
                                 <button type="submit" class="btn btn-primary">Create</button>

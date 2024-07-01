@@ -29,15 +29,15 @@ Route::post('/login', [SessionController::class, 'store'])->name('login');
 
 //Job Designations Routes
 Route::middleware('auth')->group(function () {
-Route::get('/designations', [JobDesignationController::class, 'index'])->name('designations.index');
-Route::get('/designations/create', [JobDesignationController::class, 'create'])->name('designations.create');
-Route::post('/designations', [JobDesignationController::class, 'store'])->name('designations.store');
-Route::get('/job-designations/{jobDesignation}', [JobDesignationController::class, 'show'])->name('designations.show');
-Route::get('/designations/{jobDesignation}/edit', [JobDesignationController::class, 'edit'])->name('designations.edit');
-Route::put('/designations/{jobDesignation}', [JobDesignationController::class, 'update'])->name('designations.update');
-Route::delete('/designations/{jobDesignation}', [JobDesignationController::class, 'destroy'])->name('designations.destroy');
+    Route::get('/designations', [JobDesignationController::class, 'index'])->name('designations.index');
+    Route::get('/designations/create', [JobDesignationController::class, 'create'])->name('designations.create');
+    Route::post('/designations', [JobDesignationController::class, 'store'])->name('designations.store');
+    Route::get('/designations/{jobDesignation}', [JobDesignationController::class, 'show'])->name('designations.show');
+    Route::get('/designations/{jobDesignation}/edit', [JobDesignationController::class, 'edit'])->name('designations.edit');
+    Route::put('/designations/{jobDesignation}', [JobDesignationController::class, 'update'])->name('designations.update');
+    Route::delete('/designations/{jobDesignation}', [JobDesignationController::class, 'destroy'])->name('designations.destroy');
 });
-
-
+//Status of Job Route
 Route::put('/jobs/{job}/status', [JobsController::class, 'status'])->name('jobs.status');
+
 
