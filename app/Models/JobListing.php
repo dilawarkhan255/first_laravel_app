@@ -12,7 +12,7 @@ class JobListing extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'title', 'company', 'designation_id', 'location', 'description'
+        'title', 'company', 'designation_id', 'location', 'description', 'status'
     ];
 
     public function designation()

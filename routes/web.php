@@ -8,16 +8,18 @@ use App\Http\Controllers\SessionController;
 
 //Jobs Routes
 Route::middleware('auth')->group(function () {
-    Route::get('/jobs/home', [JobsController::class, 'home'])->name('home');
-    Route::get('/jobs', [JobsController::class, 'index'])->name('index');
-    Route::get('/jobs/create', [JobsController::class, 'create'])->name('create');
-    Route::post('/jobs', [JobsController::class, 'store'])->name('store');
-    Route::get('/jobs/{job}/edit', [JobsController::class, 'edit'])->name('edit');
-    Route::put('/jobs/{job}', [JobsController::class, 'update'])->name('update');
-    Route::get('/jobs/{job}', [JobsController::class, 'show'])->name('show');
-    Route::delete('/jobs/{job}', [JobsController::class, 'destroy'])->name('destroy');
+    Route::get('/jobs/home', [JobsController::class, 'home'])->name('jobs.home');
+    Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
+    Route::get('/jobs/create', [JobsController::class, 'create'])->name('jobs.create');
+    Route::post('/jobs', [JobsController::class, 'store'])->name('jobs.store');
+    Route::get('/jobs/{job}/edit', [JobsController::class, 'edit'])->name('jobs.edit');
+    Route::put('/jobs/{job}', [JobsController::class, 'update'])->name('jobs.update');
+    Route::get('/jobs/{job}', [JobsController::class, 'show'])->name('jobs.show');
+    Route::delete('/jobs/{job}', [JobsController::class, 'destroy'])->name('jobs.destroy');
+    Route::put('/jobs/{job}/status', [JobsController::class, 'status'])->name('jobs.status');
     Route::post('/logout', [SessionController::class, 'destroy'])->name('logout');
 });
+
 
 // Auth Routes
 Route::get('/register', [RegisterUserController::class, 'create'])->name('register');
@@ -35,4 +37,7 @@ Route::get('/designations/{jobDesignation}/edit', [JobDesignationController::cla
 Route::put('/designations/{jobDesignation}', [JobDesignationController::class, 'update'])->name('designations.update');
 Route::delete('/designations/{jobDesignation}', [JobDesignationController::class, 'destroy'])->name('designations.destroy');
 });
+
+
+Route::put('/jobs/{job}/status', [JobsController::class, 'status'])->name('jobs.status');
 

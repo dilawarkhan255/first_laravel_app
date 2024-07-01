@@ -2,83 +2,51 @@
 
 namespace App\DataTables;
 
-use App\Models\Job_Listing;
-use Illuminate\Database\Eloquent\Builder as QueryBuilder;
-use Yajra\DataTables\EloquentDataTable;
-use Yajra\DataTables\Html\Builder as HtmlBuilder;
-use Yajra\DataTables\Html\Button;
+use App\Models\JobListing;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 
 class Job_ListingDataTable extends DataTable
 {
-    /**
-     * Build the DataTable class.
-     *
-     * @param QueryBuilder $query Results from query() method.
-     */
-    public function dataTable(QueryBuilder $query): EloquentDataTable
+    public function dataTable($query)
     {
-        return (new EloquentDataTable($query))
-            ->addColumn('action', 'job_listing.action')
-            ->setRowId('id');
+        return datatables()
+            ->eloquent($query)
+            ->addColumn('actions', function($job) {
+                return view('jobs.datatables.actions', compact('job'));
+            })
+            ->addColumn('description', function($job) {
+                return '<i class="fas fa-info-circle" onclick="showDescription(\''. addslashes($job->description) .'\')"></i>';
+            })
+            ->rawColumns(['actions', 'description']);
     }
 
-    /**
-     * Get the query source of dataTable.
-     */
-    public function query(Job_ListingDataTable $model): QueryBuilder
+    public function query(JobListing $model)
     {
-        return $model->query;
+        return $model->newQuery()->with('designation');
     }
 
-    /**
-     * Optional method if you want to use the html builder.
-     */
-    public function html(): HtmlBuilder
+    public function html()
     {
         return $this->builder()
-                    ->setTableId('job_listing-table')
-                    ->columns($this->getColumns())
-                    ->minifiedAjax()
-                    ->dom('Bfrtip') // Uncomment if you want to specify DOM structure
-                    ->orderBy(1)
-                    ->selectStyleSingle()
-                    ->buttons([
-                        Button::make('excel'),
-                        Button::make('csv'),
-                        Button::make('pdf'),
-                        Button::make('print'),
-                        Button::make('reset'),
-                        Button::make('reload'),
-                    ]);
+            ->setTableId('jobTable')
+            ->columns($this->getColumns())
+            ->minifiedAjax()
+            ->dom('Bfrtip')
+            ->orderBy(0)
+            ->responsive(true);
     }
 
-    /**
-     * Get the dataTable columns definition.
-     */
-    public function getColumns(): array
+    protected function getColumns()
     {
         return [
-            Column::computed('action')
-                  ->exportable(false)
-                  ->printable(false)
-                  ->width(60)
-                  ->addClass('text-center'),
-            Column::make('id'),
-            Column::make('title'),
-            Column::make('company'),
-            Column::make('designation'),
-            Column::make('description'),
-            Column::make('location'),
+            Column::make('title')->title('Title'),
+            Column::make('company')->title('Company'),
+            Column::make('designation.name')->title('Designation'),
+            Column::make('description')->title('Description')->addClass('text-center'),
+            Column::make('location')->title('Location'),
+            Column::make('status')->title('Status')->addClass('text-center'),
+            Column::computed('actions')->title('Actions')->addClass('text-center')->exportable(false)->printable(false)->width(120),
         ];
-    }
-
-    /**
-     * Get the filename for export.
-     */
-    protected function filename(): string
-    {
-        return 'Job_Listing_' . date('YmdHis');
     }
 }

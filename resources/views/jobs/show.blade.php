@@ -37,7 +37,7 @@
                             </tbody>
                         </table>
                         <div>
-                            <a href="{{ route('index') }}" class="btn btn-secondary">Back</a>
+                            <a href="{{ route('jobs.index') }}" class="btn btn-secondary">Back</a>
                         </div>
                     </div>
                 </div>
