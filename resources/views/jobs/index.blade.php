@@ -12,7 +12,7 @@
     @endif
     <div class="container">
         <h1>Job Listings</h1>
-        <div class="table-responsive">
+        <div class="table-responsivee">
             <table id="jobTable" class="table table-bordered table-striped">
                 <thead>
                     <tr>
