@@ -21,6 +21,8 @@
               <a href="/jobs/home" class="rounded-md {{ Request::is('jobs/home') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" aria-current="page" style="text-decoration:none;">Home</a>
               <a href="/jobs" class="rounded-md {{ Request::is('jobs') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" style="text-decoration:none;">Jobs</a>
               <a href="/designations" class="rounded-md {{ Request::is('designations') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" style="text-decoration:none;">Job Designations</a>
+              <a href="/students" class="rounded-md {{ Request::is('students') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" style="text-decoration:none;">Students</a>
+              <a href="/subjects" class="rounded-md {{ Request::is('subjects') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" style="text-decoration:none;">Subjects</a>
             </div>
             @endauth
           </div>
@@ -74,7 +76,7 @@
             <img class="h-10 w-10 rounded-full" src="">
           </div>
           <div class="ml-3">
-          
+
           </div>
           <button type="button" class="relative ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
             <span class="absolute -inset-1.5"></span>

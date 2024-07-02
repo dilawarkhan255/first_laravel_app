@@ -1,8 +1,8 @@
 <x-layout>
     <x-slot name="heading">
         <div class="d-flex justify-content-between align-items-center">
-            <h2 class="mb-0">Jobs</h2>
-            <a href="{{ route('jobs.create') }}" class="btn btn-primary btn-sm mb-3">Create</a>
+            <h2 class="mb-0">Students</h2>
+            <a href="{{ route('students.create') }}" class="btn btn-primary btn-sm mb-3">Create</a>
         </div>
     </x-slot>
     @if (Session::has('success'))
@@ -11,17 +11,15 @@
         </div>
     @endif
     <div class="container">
-        <h1>Job Listings</h1>
-        <div class="table-responsivee">
-            <table id="jobTable" class="table table-bordered table-striped">
+        <h1>Students List</h1>
+        <div class="table-responsive">
+            <table id="studentTable" class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>Title</th>
-                        <th>Company</th>
-                        <th>Designation</th>
-                        <th>Description</th>
-                        <th>Location</th>
-                        <th>Status</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -32,7 +30,7 @@
     </div>
 
     <!-- Bootstrap Modal -->
-    <div class="modal fade" id="jobModal" tabindex="-1" role="dialog" aria-labelledby="jobModalLabel" aria-hidden="true">
+    <div class="modal fade" id="subjectModal" tabindex="-1" role="dialog" aria-labelledby="jobModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -66,55 +64,26 @@
     <!-- SweetAlert JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
 
-    <!-- Modal Script -->
-    <script>
-        function showDescription(description) {
-            var plainText = description.replace(/<[^>]*>/g, '');
-            document.getElementById('jobDescription').innerText = plainText;
-            $('#jobModal').modal('show');
-        }
-    </script>
-
     <!-- DataTable Initialization Script -->
     <script>
         $(document).ready(function() {
-            $('#jobTable').DataTable({
-                responsive: true, // Enable responsiveness
+            $('#studentTable').DataTable({
+                responsive: true,
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('jobs.index') }}",
+                ajax: "{{ route('students.index') }}",
                 columns: [
-                    { data: 'title', name: 'title' },
-                    { data: 'company', name: 'company' },
-                    { data: 'designation', name: 'designation' },
-                    {
-                        data: 'description',
-                        name: 'description',
-                        render: function(data) {
-                            return '<a href="javascript:void(0)" onclick="showDescription(\'' + data.replace(/'/g, "\\'") + '\')" title="View Description"><i class="fa-solid fa-circle-info" style="color: #000000;"></i></a>';
-                        }
-                    },
-                    { data: 'location', name: 'location' },
-
-                    {
-                        data: 'status',
-                        name: 'status',
-                        render: function(data, type, row) {
-                            return '<form action="' + row.status_url + '" method="POST" style="display: inline;">' +
-                                    '@csrf' +
-                                    '@method("PUT")' +
-                                    '<button type="submit" class="btn btn-sm ' + (data ? 'btn-success' : 'btn-danger') + '">' +
-                                    (data ? 'Enable' : 'Disable') + '</button>' +
-                                '</form>';
-                        }
-                    },
+                    { data: 'name', name: 'name' },
+                    { data: 'email', name: 'email' },
+                    { data: 'phone', name: 'phone' },
+                    { data: 'address', name: 'address' },
                     {
                         data: 'action',
                         name: 'action',
                         orderable: false,
                         searchable: false,
                         render: function(data, type, row) {
-                            return '<a href="' + row.show_url + '" title="View"><i class="fas fa-eye" style="color: #000000;"></i></a> ' +
+                        return '<a href="' + row.show_url + '" title="View"><i class="fas fa-eye" style="color: #000000;"></i></a> ' +
                                 '<a href="' + row.edit_url + '" title="Edit"><i class="fas fa-edit" style="color: #000000; margin-left:3px;"></i></a> ' +
                                 '<form action="' + row.delete_url + '" method="POST" style="display: inline;">' +
                                 '@csrf' +

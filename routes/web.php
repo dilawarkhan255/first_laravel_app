@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobsController;
 use App\Http\Controllers\RegisterUserController;
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SubjectController;
 
 //Jobs Routes
 Route::middleware('auth')->group(function () {
@@ -18,6 +20,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/jobs/{job}', [JobsController::class, 'destroy'])->name('jobs.destroy');
     Route::put('/jobs/{job}/status', [JobsController::class, 'status'])->name('jobs.status');
     Route::post('/logout', [SessionController::class, 'destroy'])->name('logout');
+    //Status of Job Route
+    Route::put('/jobs/{job}/status', [JobsController::class, 'status'])->name('jobs.status');
 });
 
 
@@ -37,7 +41,29 @@ Route::middleware('auth')->group(function () {
     Route::put('/designations/{jobDesignation}', [JobDesignationController::class, 'update'])->name('designations.update');
     Route::delete('/designations/{jobDesignation}', [JobDesignationController::class, 'destroy'])->name('designations.destroy');
 });
-//Status of Job Route
-Route::put('/jobs/{job}/status', [JobsController::class, 'status'])->name('jobs.status');
 
+//Job Students Routes
+Route::middleware('auth')->group(function () {
+    Route::get('/students', [StudentController::class, 'index'])->name('students.index');
+    Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
+    Route::post('/students', [StudentController::class, 'store'])->name('students.store');
+    Route::get('/students/{student}', [StudentController::class, 'show'])->name('students.show');
+    Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
+    Route::put('/students/{student}', [StudentController::class, 'update'])->name('students.update');
+    Route::delete('/students/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
+});
+
+//Job Subjects Routes
+Route::middleware('auth')->group(function () {
+    Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
+    Route::get('/subjects/create', [SubjectController::class, 'create'])->name('subjects.create');
+    Route::post('/subjects', [SubjectController::class, 'store'])->name('subjects.store');
+    Route::get('/subjects/{subject}', [SubjectController::class, 'show'])->name('subjects.show');
+    Route::get('/subjects/{subject}/edit', [SubjectController::class, 'edit'])->name('subjects.edit');
+    Route::put('/subjects/{subject}', [SubjectController::class, 'update'])->name('subjects.update');
+    Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy'])->name('subjects.destroy');
+
+    // routes AssignSubject
+    Route::post('/students/assign-subjects', [StudentController::class, 'assignSubjects'])->name('assign.subjects');
+});
 
