@@ -12,7 +12,7 @@
     @endif
     <div class="container">
         <h1>Students List</h1>
-        <div class="table-responsive">
+        <div class="table-responsivee">
             <table id="studentTable" class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -29,21 +29,33 @@
         </div>
     </div>
 
-    <!-- Bootstrap Modal -->
-    <div class="modal fade" id="subjectModal" tabindex="-1" role="dialog" aria-labelledby="jobModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+    <!-- Assign Subjects Modal -->
+    <div class="modal fade" id="assignSubjectsModal" tabindex="-1" role="dialog" aria-labelledby="assignSubjectsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="jobModalLabel">Job Description</h5>
+                    <h5 class="modal-title" id="assignSubjectsModalLabel">Assign Subjects to Student</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p id="jobDescription"></p>
+                    <form id="assignSubjectsForm">
+                        <input type="hidden" id="student_id" name="student_id">
+                        <div class="form-group">
+                            <label for="subjects">Subjects:</label>
+                            <select multiple class="form-control" id="subjects" name="subjects[]">
+                                @foreach($subjects as $subject)
+                                    <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="assignSubjectsBtn" onclick="assignSubjects()">Assign Subjects</button>
+                    <button type="button" class="btn btn-danger btn-sm" id="unassignSubjectsBtn"  onclick="unassignSubjects()">Unassign Subjects</button>
                 </div>
             </div>
         </div>
@@ -83,18 +95,66 @@
                         orderable: false,
                         searchable: false,
                         render: function(data, type, row) {
-                        return '<a href="' + row.show_url + '" title="View"><i class="fas fa-eye" style="color: #000000;"></i></a> ' +
+                            return '<a href="' + row.show_url + '" title="View"><i class="fas fa-eye" style="color: #000000;"></i></a> ' +
                                 '<a href="' + row.edit_url + '" title="Edit"><i class="fas fa-edit" style="color: #000000; margin-left:3px;"></i></a> ' +
                                 '<form action="' + row.delete_url + '" method="POST" style="display: inline;">' +
                                 '@csrf' +
                                 '@method("DELETE")' +
                                 '<i class="fas fa-trash show_confirm" style="cursor: pointer;"></i>' +
-                                '</form>';
+                                '</form> ' +
+                                '<a href="javascript:void(0)" onclick="openAssignModal(' + row.id + ')" title="Assign Subjects"><i class="fa-solid fa-up-right-from-square" style="color: #000000; margin-left:3px;"></i></a>';
                         }
                     }
                 ]
             });
         });
+    </script>
+
+    <!-- Modal and Assign Script -->
+    <script>
+        function openAssignModal(studentId) {
+            $('#student_id').val(studentId);
+            $('#assignSubjectsModal').modal('show');
+        }
+
+        function assignSubjects() {
+            var studentId = $('#student_id').val();
+            var subjects = $('#subjects').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('assign.subjects') }}',
+                data: {
+                    student_id: studentId,
+                    subjects: subjects,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = '{{ route('students.index') }}';
+                    }
+                }
+            });
+        }
+
+        function unassignSubjects() {
+            var studentId = $('#student_id').val();
+            var subjects = $('#subjects').val();
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('unassign.subjects') }}',
+                data: {
+                    student_id: studentId,
+                    subjects: subjects,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                        if (response.success) {
+                            window.location.href = '{{ route('students.index') }}';
+                        }
+                    }
+            });
+        }
     </script>
 
     <!-- Delete Confirmation Script -->
@@ -115,5 +175,4 @@
             });
         });
     </script>
-
 </x-layout>

@@ -21,7 +21,7 @@ class SessionController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            // Authentication passed...
+
             return redirect()->route('jobs.home')->with('success', 'Login successful!');
         }
 
@@ -33,7 +33,7 @@ class SessionController extends Controller
     public function destroy()
     {
         Auth::logout();
-        
+
         return redirect('login');
     }
 }

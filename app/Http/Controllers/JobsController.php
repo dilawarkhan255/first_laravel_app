@@ -23,7 +23,7 @@ class JobsController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $jobs = JobListing::select('*'); // Adjust your query as needed
+            $jobs = JobListing::select('*');
 
             return DataTables::of($jobs)
                 ->addIndexColumn()
@@ -60,7 +60,7 @@ class JobsController extends Controller
 
     public function create(JobListing $job)
     {
-        $designations = JobDesignation::all(); 
+        $designations = JobDesignation::all();
 
         return view('jobs.create', ['job' => $job, 'designations' => $designations]);
     }
@@ -82,7 +82,7 @@ class JobsController extends Controller
 
     public function edit(JobListing $job)
     {
-        $designations = JobDesignation::all(); 
+        $designations = JobDesignation::all();
         return view('jobs.edit', ['job' => $job, 'designations' => $designations]);
     }
 

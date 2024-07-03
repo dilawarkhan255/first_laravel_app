@@ -34,6 +34,14 @@
                                     <th scope="row">Address</th>
                                     <td>{{ $student->address }}</td>
                                 </tr>
+                                <tr>
+                                    <th scope="row">Subjects</th>
+                                    <td>
+                                        @foreach ($student->subjects as $subject)
+                                            <span class="badge badge-primary">{{ $subject->name }}</span>
+                                        @endforeach
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                         <div>
