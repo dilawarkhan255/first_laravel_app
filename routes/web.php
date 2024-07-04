@@ -67,5 +67,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/students/assign-subjects', [StudentController::class, 'assignSubjects'])->name('assign.subjects');
     Route::post('students/unassign-subjects', [StudentController::class, 'unassignSubjects'])->name('unassign.subjects');
 
+    Route::get('/student/subjects/{id}', [StudentController::class, 'getStudentSubject'])->name('student.subjects');
+
+
 });
 

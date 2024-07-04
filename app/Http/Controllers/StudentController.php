@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Session;
 
@@ -47,7 +48,7 @@ class StudentController extends Controller
                     ->make(true);
             }
 
-            $subjects = Subject::all();
+            $subjects = Subject::select('id','name')->get()->toArray();
             return view('students.index', compact('subjects'));
         }
 
@@ -70,14 +71,9 @@ class StudentController extends Controller
         return redirect()->route('students.index')->with('success', 'Student created successfully.');
     }
 
-    // public function show(Student $student)
-    // {
-    //     return view('students.show', compact('student'));
-    // }
-
     public function show($id)
     {
-        $student = Student::with('subjects')->findOrFail($id);
+        $student = Student::with('subjects')->find($id);
         return view('students.show', compact('student'));
     }
 
@@ -117,14 +113,17 @@ class StudentController extends Controller
         return response()->json(['success' => true]);
     }
 
+
     public function unassignSubjects(Request $request)
     {
         $student = Student::find($request->student_id);
-        $student->subjects()->detach($request->subjects);
-
-        Session::flash('success', 'Subjects unassigned successfully.');
-
+        $student->subjects()->detach($request->subject_id);
         return response()->json(['success' => true]);
     }
 
+    public function getStudentSubject($id){
+        $subjects = DB::table('student_subject')->where('student_id',$id)->pluck('subject_id')->toArray();
+        return $subjects;
+    }
 }
+

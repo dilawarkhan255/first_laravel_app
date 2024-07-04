@@ -5,6 +5,12 @@
         </div>
     </x-slot>
 
+    @if (Session::has('success'))
+        <div class="alert alert-success">
+            {{ Session::get('success') }}
+        </div>
+    @endif
+
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
@@ -24,7 +30,7 @@
                                 </tr>
                                 <tr>
                                     <th scope="row">Email</th>
-                                    <td>{{ $student->email  }}</td>
+                                    <td>{{ $student->email }}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Phone</th>
@@ -38,7 +44,10 @@
                                     <th scope="row">Subjects</th>
                                     <td>
                                         @foreach ($student->subjects as $subject)
-                                            <span class="badge badge-primary">{{ $subject->name }}</span>
+                                            <div class="form-check form-check-inline" id="subject_{{ $subject->id }}">
+                                                <input class="form-check-input" type="checkbox" name="subject_ids[]" value="{{ $subject->id }}" onclick="unassignSubject(this)">
+                                                <label class="form-check-label badge badge-primary">{{ $subject->name }}</label>
+                                            </div>
                                         @endforeach
                                     </td>
                                 </tr>
@@ -55,4 +64,36 @@
 
     <!-- Bootstrap JS and dependencies (optional) -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <script>
+        function unassignSubject(checkbox) {
+            var studentId = '{{ $student->id }}';
+            var subjectId = $(checkbox).val();
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('unassign.subjects') }}',
+                data: {
+                    student_id: studentId,
+                    subject_id: subjectId,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $(checkbox).closest('.form-check-inline').remove();
+                        alert('Subject unassigned successfully.');
+                    } else {
+                        alert('Failed to unassign subject.');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert('Error occurred. Please try again.');
+                }
+            });
+        }
+    </script>
 </x-layout>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -36,7 +37,7 @@ class SubjectController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-
+        $students = Student::all();
         return view('subjects.index');
     }
 
@@ -56,8 +57,9 @@ class SubjectController extends Controller
         return redirect()->route('subjects.index')->with('success', 'Subject created successfully.');
     }
 
-    public function show(Subject $subject)
+    public function show($id)
     {
+        $subject = Subject::with('students')->find($id);
         return view('subjects.show', compact('subject'));
     }
 
