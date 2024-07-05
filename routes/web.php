@@ -7,6 +7,7 @@ use App\Http\Controllers\RegisterUserController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
+use App\Models\Subject;
 
 //Jobs Routes
 Route::middleware('auth')->group(function () {
@@ -66,9 +67,11 @@ Route::middleware('auth')->group(function () {
     // routes AssignSubject
     Route::post('/students/assign-subjects', [StudentController::class, 'assignSubjects'])->name('assign.subjects');
     Route::post('students/unassign-subjects', [StudentController::class, 'unassignSubjects'])->name('unassign.subjects');
+    Route::get('/students/{id}/available-subjects', [StudentController::class, 'getAvailableSubjects'])->name('get.available.subjects');
 
-    Route::get('/student/subjects/{id}', [StudentController::class, 'getStudentSubject'])->name('student.subjects');
-
+    Route::post('/subjects/assign-students', [SubjectController::class, 'assignStudents'])->name('assign.students');
+    Route::post('subjects/unassign-students', [SubjectController::class, 'unassignStudents'])->name('unassign.students');
+    Route::get('/subjects/{id}/available-students', [SubjectController::class, 'getAvailableStudents'])->name('get.available.students');
 
 });
 

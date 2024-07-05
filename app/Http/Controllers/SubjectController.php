@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use App\Models\Subject;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Session;
 
 class SubjectController extends Controller
 {
@@ -37,8 +39,8 @@ class SubjectController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        $students = Student::all();
-        return view('subjects.index');
+        $students = Student::select('id','name')->get()->toArray();
+        return view('subjects.index', compact('students'));
     }
 
     public function create()
@@ -84,5 +86,32 @@ class SubjectController extends Controller
         $subject->delete();
 
         return redirect()->route('subjects.index')->with('success', 'Subject deleted successfully.');
+    }
+
+    public function assignStudents(Request $request)
+    {
+        $subject = Subject::find($request->subject_id);
+        $subject->students()->attach($request->students);
+        Session::flash('success', 'Students assigned successfully.');
+
+        return response()->json(['success' => true]);
+    }
+
+
+    public function unassignStudents(Request $request)
+    {
+        $subject = Subject::find($request->subject_id);
+        $subject->students()->detach($request->student_id);
+        return response()->json(['success' => true]);
+    }
+
+    public function getAvailableStudents($id)
+    {
+        $assignedStudents = DB::table('student_subject')->where('subject_id', $id)->pluck('student_id')->toArray();
+        $data = [
+            'subject_id' => $id,
+            'data' => $assignedStudents
+        ];
+        return response()->json($data);
     }
 }

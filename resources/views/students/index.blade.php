@@ -45,11 +45,7 @@
                     <form id="assignSubjectsForm">
                         <input type="hidden" id="student_id" name="student_id">
                         <div class="form-group">
-                            <select id="choices-multiple-remove-button" placeholder="Select Subjects" multiple>
-                                @foreach($subjects as $subject)
-                                    <option value="{{ $subject->id }}">{{ $subject->name }}</option>
-                                @endforeach
-                            </select>
+                            <select id="subjects" class="form-control" placeholder="Select Subjects" multiple></select>
                         </div>
                     </form>
                 </div>
@@ -61,12 +57,12 @@
         </div>
     </div>
 
-    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
+
     <script>
         $(document).ready(function() {
             $('#studentTable').DataTable({
@@ -92,25 +88,54 @@
                                 '@method("DELETE")' +
                                 '<i class="fas fa-trash show_confirm" style="cursor: pointer;"></i>' +
                                 '</form> ' +
-                                '<a href="javascript:void(0)" onclick="openAssignModal(' + row.id + ')" title="Assign Subjects"><i class="fas fa-book" style="color: #000000; margin-left:3px;"></i></a>';
+                                '<a href="javascript:void(0)" onclick="openAssignModal(' + row.id + ')" title="Assign Subjects"><i class="fa-solid fa-up-right-from-square" style="color: #000000; margin-left:3px;"></i></a>';
                         }
                     }
                 ]
             });
 
-            new Choices('#choices-multiple-remove-button', {
-                removeItemButton: true
-            });
         });
+    </script>
+    <script>
+        var subject_ids_array = [];
+        var subjects = @json($subjects);
+        var selectElement = document.getElementById('subjects');
+        var choicesInstance;
 
         function openAssignModal(studentId) {
             $('#student_id').val(studentId);
-            $('#assignSubjectsModal').modal('show');
+
+            $.ajax({
+                url: '{{ route("get.available.subjects", ":id") }}'.replace(':id', studentId),
+                type: 'GET',
+                success: function(data) {
+                    $('#subjects').empty();
+                    subject_ids_array = data;
+
+                    subjects.forEach(subject => {
+                        if (!subject_ids_array.includes(subject.id)) {
+                            const option = document.createElement('option');
+                            option.value = subject.id;
+                            option.text = subject.name;
+                            selectElement.appendChild(option);
+                        }
+                    });
+
+                    if (choicesInstance) {
+                        choicesInstance.destroy();
+                    }
+                    choicesInstance = new Choices('#subjects', {
+                        removeItemButton: true
+                    });
+
+                    $('#assignSubjectsModal').modal('show');
+                }
+            });
         }
 
         function assignSubjects() {
             var studentId = $('#student_id').val();
-            var subjects = $('#choices-multiple-remove-button').val();
+            var subjects = $('#subjects').val();
 
             $.ajax({
                 type: 'POST',
@@ -127,7 +152,8 @@
                 }
             });
         }
-
+    </script>
+    <script>
         $(document).on('click', '.show_confirm', function(event) {
             var form =  $(this).closest("form");
             event.preventDefault();
@@ -145,7 +171,6 @@
         });
     </script>
 
-    <!-- Styles -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />

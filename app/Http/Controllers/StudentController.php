@@ -49,6 +49,8 @@ class StudentController extends Controller
             }
 
             $subjects = Subject::select('id','name')->get()->toArray();
+            // // dd($subjects);
+            // $subjects =Subject::all();
             return view('students.index', compact('subjects'));
         }
 
@@ -106,8 +108,7 @@ class StudentController extends Controller
     public function assignSubjects(Request $request)
     {
         $student = Student::find($request->student_id);
-        $student->subjects()->sync($request->subjects);
-
+        $student->subjects()->attach($request->subjects);
         Session::flash('success', 'Subjects assigned successfully.');
 
         return response()->json(['success' => true]);
@@ -121,9 +122,13 @@ class StudentController extends Controller
         return response()->json(['success' => true]);
     }
 
-    public function getStudentSubject($id){
-        $subjects = DB::table('student_subject')->where('student_id',$id)->pluck('subject_id')->toArray();
-        return $subjects;
+    public function getAvailableSubjects($id)
+    {
+        // $allSubjects = Subject::all();
+        $assignedSubjects = DB::table('student_subject')->where('student_id', $id)->pluck('subject_id')->toArray();
+        return response()->json($assignedSubjects);
     }
+
+
 }
 

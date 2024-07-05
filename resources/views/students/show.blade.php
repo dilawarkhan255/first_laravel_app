@@ -45,7 +45,7 @@
                                     <td>
                                         @foreach ($student->subjects as $subject)
                                             <div class="form-check form-check-inline" id="subject_{{ $subject->id }}">
-                                                <input class="form-check-input" type="checkbox" name="subject_ids[]" value="{{ $subject->id }}" onclick="unassignSubject(this)">
+                                                <input class="form-check-input" type="checkbox" name="subject_ids[]" value="{{ $subject->id }}" checked onclick="unassignSubject(this)">
                                                 <label class="form-check-label badge badge-primary">{{ $subject->name }}</label>
                                             </div>
                                         @endforeach
@@ -83,10 +83,12 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        $(checkbox).closest('.form-check-inline').remove();
-                        alert('Subject unassigned successfully.');
+                        if (!$(checkbox).is(':checked')) {
+                            $(checkbox).closest('.form-check-inline').remove();
+                            alert('Subject unassigned successfully.');
+                        }
                     } else {
-                        alert('Failed to unassign subject.');
+                        alert('Failed to update subject assignment.');
                     }
                 },
                 error: function(xhr, status, error) {
