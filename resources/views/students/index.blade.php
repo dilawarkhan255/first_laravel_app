@@ -14,10 +14,12 @@
 
     <div class="container">
         <h1>Students List</h1>
+        <button class="btn btn-danger btn-sm mt-2 mb-2" id="bulkDeleteBtn" onclick="bulkDelete()">Delete Selected</button>
         <div class="table-responsive">
             <table id="studentTable" class="table table-bordered table-striped">
                 <thead>
                     <tr>
+                        <th><input type="checkbox" id="masterCheckbox"></th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
@@ -32,12 +34,12 @@
     </div>
 
     <!-- Assign Subjects Modal -->
-    <div class="modal fade" id="assignSubjectsModal" tabindex="-1" role="dialog" aria-labelledby="assignSubjectsModalLabel" aria-hidden="true">
+    <div class="modal fade" id="assignSubjectsModal" tabindex="-1" role="dialog" aria-labelledby="assignSubjectsModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="assignSubjectsModalLabel">Assign Subjects to Student</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -45,17 +47,18 @@
                     <form id="assignSubjectsForm">
                         <input type="hidden" id="student_id" name="student_id">
                         <div class="form-group">
-                            <select id="subjects" class="form-control" placeholder="Select Subjects" multiple></select>
+                            <select id="subjects" class="form-select" placeholder="Select Subjects" multiple></select>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal()">Close</button>
                     <button type="button" class="btn btn-primary btn-sm" id="assignSubjectsBtn" onclick="assignSubjects()">Assign Subjects</button>
                 </div>
             </div>
         </div>
     </div>
+
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -71,6 +74,9 @@
                 serverSide: true,
                 ajax: "{{ route('students.index') }}",
                 columns: [
+                    { data: 'id', name: 'id', orderable: false, searchable: false, render: function(data, type, row) {
+                        return '<input type="checkbox" class="rowCheckbox" value="' + row.id + '">';
+                    }},
                     { data: 'name', name: 'name' },
                     { data: 'email', name: 'email' },
                     { data: 'phone', name: 'phone' },
@@ -93,8 +99,56 @@
                     }
                 ]
             });
+            $('#masterCheckbox').on('click', function() {
+                if ($(this).is(':checked')) {
+                    $('.rowCheckbox').prop('checked', true);
+                } else {
+                    $('.rowCheckbox').prop('checked', false);
+                }
+            });
 
+            $(document).on('click', '.rowCheckbox', function() {
+                if ($('.rowCheckbox:checked').length == $('.rowCheckbox').length) {
+                    $('#masterCheckbox').prop('checked', true);
+                } else {
+                    $('#masterCheckbox').prop('checked', false);
+                }
+            });
         });
+
+        function bulkDelete() {
+            var ids = [];
+            $('.rowCheckbox:checked').each(function() {
+                ids.push($(this).val());
+            });
+
+            if (ids.length > 0) {
+                swal({
+                    title: "Are you sure you want to delete selected records?",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                }).then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '{{ route('students.bulkDelete') }}',
+                            data: {
+                                ids: ids,
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    window.location.href = '{{ route('students.index') }}';
+                                }
+                            }
+                        });
+                    }
+                });
+            } else {
+                swal("Please select at least one record.");
+            }
+        }
     </script>
     <script>
         var subject_ids_array = [];
@@ -110,27 +164,33 @@
                 type: 'GET',
                 success: function(data) {
                     $('#subjects').empty();
-                    subject_ids_array = data;
 
                     subjects.forEach(subject => {
-                        if (!subject_ids_array.includes(subject.id)) {
-                            const option = document.createElement('option');
-                            option.value = subject.id;
-                            option.text = subject.name;
-                            selectElement.appendChild(option);
+                        console.log(!data.includes(subject.id));
+                        if (!data.includes(subject.id)) {
+                            const option = $('<option>', {
+                                value: subject.id,
+                                text: subject.name
+                            });
+                            $('#subjects').append(option);
                         }
                     });
 
-                    if (choicesInstance) {
-                        choicesInstance.destroy();
-                    }
-                    choicesInstance = new Choices('#subjects', {
-                        removeItemButton: true
-                    });
 
+
+                    choicesInstance = new Choices('#subjects');
                     $('#assignSubjectsModal').modal('show');
                 }
             });
+        }
+
+        function closeModal() {
+            if ($('#assignSubjectsModal').is(':visible')) {
+                if (choicesInstance) {
+                    choicesInstance.destroy();
+                }
+                $('#assignSubjectsModal').modal('hide');
+            }
         }
 
         function assignSubjects() {

@@ -26,12 +26,12 @@
         </div>
     </div>
 
-    <div class="modal fade" id="assignStudentsModal" tabindex="-1" role="dialog" aria-labelledby="assignStudentsModalLabel" aria-hidden="true">
+    <div class="modal fade" id="assignStudentsModal" tabindex="-1" role="dialog" aria-labelledby="assignStudentsModalLabel" aria-hidden="true"  data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="assignStudentsModalLabel">Assign Students to Subject</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -46,8 +46,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="assignStudentsBtn"  onclick="assignStudents()">Assign Students</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+                    <button type="button" class="btn btn-primary" id="assignStudentsBtn" onclick="assignStudents()">Assign Students</button>
                 </div>
             </div>
         </div>
@@ -90,62 +90,66 @@
         });
     </script>
 
-<script>
-    var student_ids_array = [];
-    var students = @json($students);
-    var selectElement = document.getElementById('students');
-    var choicesInstance;
+    <script>
+        var student_ids_array = [];
+        var students = @json($students);
+        var selectElement = document.getElementById('students');
+        var choicesInstance;
 
-    function openAssignModal(subjectId) {
-        $('#subject_id').val(subjectId);
+        function openAssignModal(subjectId) {
+            $('#subject_id').val(subjectId);
 
-        $.ajax({
-            url: '{{ route("get.available.students", ":id") }}'.replace(':id', subjectId),
-            type: 'GET',
-            success: function(data) {
-                $('#students').empty();
-                student_ids_array = data.data;
-                students.forEach(student => {
-                    if (!student_ids_array.includes(student.id) && subjectId == data.subject_id) {
-                        const option = document.createElement('option');
-                        option.value = student.id;
-                        option.text = student.name;
-                        selectElement.appendChild(option);
-                    }
-                });
+            $.ajax({
+                url: '{{ route("get.available.students", ":id") }}'.replace(':id', subjectId),
+                type: 'GET',
+                success: function(data) {
+                    $('#students').empty();
+                    student_ids_array = data;
+                    students.forEach(student => {
+                        if (!student_ids_array.includes(student.id)) {
+                            const option = document.createElement('option');
+                            option.value = student.id;
+                            option.text = student.name;
+                            selectElement.appendChild(option);
+                        }
+                    });
 
+
+                    choicesInstance = new Choices('#students');
+                    $('#assignStudentsModal').modal('show');
+                }
+            });
+        }
+
+        function closeModal() {
+            if ($('#assignStudentsModal').is(':visible')) {
                 if (choicesInstance) {
                     choicesInstance.destroy();
                 }
-                choicesInstance = new Choices('#students', {
-                    removeItemButton: true
-                });
-
-                $('#assignStudentsModal').modal('show');
+                $('#assignStudentsModal').modal('hide');
             }
-        });
-    }
+        }
 
-    function assignStudents() {
-        var subjectId = $('#subject_id').val();
-        var students = $('#students').val();
+        function assignStudents() {
+            var subjectId = $('#subject_id').val();
+            var students = $('#students').val();
 
-        $.ajax({
-            type: 'POST',
-            url: '{{ route('assign.students') }}',
-            data: {
-                subject_id: subjectId,
-                students: students,
-                _token: '{{ csrf_token() }}'
-            },
-            success: function(response) {
-                if (response.success) {
-                    window.location.href = '{{ route('subjects.index') }}';
+            $.ajax({
+                type: 'POST',
+                url: '{{ route('assign.students') }}',
+                data: {
+                    subject_id: subjectId,
+                    students: students,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = '{{ route('subjects.index') }}';
+                    }
                 }
-            }
-        });
-    }
-</script>
+            });
+        }
+    </script>
 
 
     <!-- Delete Confirmation Script -->

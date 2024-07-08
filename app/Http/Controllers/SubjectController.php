@@ -108,10 +108,7 @@ class SubjectController extends Controller
     public function getAvailableStudents($id)
     {
         $assignedStudents = DB::table('student_subject')->where('subject_id', $id)->pluck('student_id')->toArray();
-        $data = [
-            'subject_id' => $id,
-            'data' => $assignedStudents
-        ];
-        return response()->json($data);
+        return response()->json($assignedStudents);
     }
+
 }

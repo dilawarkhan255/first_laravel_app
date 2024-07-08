@@ -49,8 +49,6 @@ class StudentController extends Controller
             }
 
             $subjects = Subject::select('id','name')->get()->toArray();
-            // // dd($subjects);
-            // $subjects =Subject::all();
             return view('students.index', compact('subjects'));
         }
 
@@ -124,11 +122,22 @@ class StudentController extends Controller
 
     public function getAvailableSubjects($id)
     {
-        // $allSubjects = Subject::all();
         $assignedSubjects = DB::table('student_subject')->where('student_id', $id)->pluck('subject_id')->toArray();
         return response()->json($assignedSubjects);
     }
 
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        if (!empty($ids)) {
+            Student::whereIn('id', $ids)->delete();
+
+            return response()->json(['success' => 'Selected students have been deleted successfully.']);
+        }
+
+        return response()->json(['error' => 'Please select at least one student.'], 400);
+    }
 
 }
 

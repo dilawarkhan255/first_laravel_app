@@ -73,5 +73,7 @@ Route::middleware('auth')->group(function () {
     Route::post('subjects/unassign-students', [SubjectController::class, 'unassignStudents'])->name('unassign.students');
     Route::get('/subjects/{id}/available-students', [SubjectController::class, 'getAvailableStudents'])->name('get.available.students');
 
+    Route::post('students/bulk-delete', [StudentController::class, 'bulkDelete'])->name('students.bulkDelete');
+
 });
 
