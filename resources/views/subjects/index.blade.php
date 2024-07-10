@@ -11,11 +11,12 @@
         </div>
     @endif
     <div class="container">
-        <h1>Subject List</h1>
+        <strong class="mb-3">Subject List</strong> <button class="btn btn-danger btn-sm mt-2 mb-3 ml-2" id="bulkDeleteBtn" onclick="bulkDelete()">Bulk Delete</button>
         <div class="table-responsive">
             <table id="subjectTable" class="table table-bordered table-striped">
                 <thead>
                     <tr>
+                        <th><input type="checkbox" id="masterCheckbox"></th>
                         <th>Name</th>
                         <th>Actions</th>
                     </tr>
@@ -68,6 +69,10 @@
                 serverSide: true,
                 ajax: "{{ route('subjects.index') }}",
                 columns: [
+                    { data: 'name', name: 'name', orderable: false, searchable: false, render: function(data, type, row) {
+                        return '<input type="checkbox" class="rowCheckbox" value="' + row.id + '">';
+                    }},
+
                     { data: 'name', name: 'name' },
                     {
                         data: 'action',
@@ -87,7 +92,61 @@
                     }
                 ]
             });
+            $('#masterCheckbox').on('click', function() {
+                if ($(this).is(':checked')) {
+                    $('.rowCheckbox').prop('checked', true);
+                } else {
+                    $('.rowCheckbox').prop('checked', false);
+                }
+            });
+            $(document).on('click', '.rowCheckbox', function() {
+                if ($('.rowCheckbox:checked').length == $('.rowCheckbox').length) {
+                    $('#masterCheckbox').prop('checked', true);
+                } else {
+                    $('#masterCheckbox').prop('checked', false);
+                }
+            });
         });
+
+        function bulkDelete() {
+            var ids = [];
+            $('.rowCheckbox:checked').each(function() {
+                ids.push($(this).val());
+            });
+
+            if (ids.length > 0) {
+                swal({
+                    title: "Are you sure you want to delete selected records?",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                }).then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '{{ route('subjects.bulkDelete') }}',
+                            data: {
+                                ids: ids,
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                if (response.success) {
+                                    swal("Success", response.success, "success").then(() => {
+                                        window.location.href = '{{ route('subjects.index') }}';
+                                    });
+                                } else if (response.warning) {
+                                    swal("Warning", response.warning, "warning").then(() => {
+                                        window.location.href = '{{ route('subjects.index') }}';
+                                    });
+                                }
+                            }
+                        });
+                    }
+                });
+            } else {
+                swal("Please select at least one record.");
+            }
+        }
     </script>
 
     <script>

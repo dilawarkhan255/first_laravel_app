@@ -129,14 +129,23 @@ class StudentController extends Controller
     public function bulkDelete(Request $request)
     {
         $ids = $request->input('ids');
+        $undeletedStudents = [];
 
-        if (!empty($ids)) {
-            Student::whereIn('id', $ids)->delete();
-
-            return response()->json(['success' => 'Selected students have been deleted successfully.']);
+        foreach ($ids as $id) {
+            $student = Student::with('subjects')->find($id);
+            if ($student->subjects->isEmpty()) {
+                $student->delete();
+            } else {
+                $undeletedStudents[] = $student->name;
+            }
         }
 
-        return response()->json(['error' => 'Please select at least one student.'], 400);
+        if (empty($undeletedStudents)) {
+            return response()->json(['success' => 'Selected students have been deleted successfully.']);
+        } else {
+            return response()->json(['warning' => 'Some students were not deleted because they have subjects assigned: ' . implode(', ', $undeletedStudents)]);
+        }
+
     }
 
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobDesignationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobsController;
@@ -8,6 +9,10 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Models\Subject;
+
+
+Route::get('/', [HomeController::class, 'home'])->name('home');
+Route::get('/job/{job}', [HomeController::class, 'job_details'])->name('job_details');
 
 //Jobs Routes
 Route::middleware('auth')->group(function () {
@@ -64,16 +69,19 @@ Route::middleware('auth')->group(function () {
     Route::put('/subjects/{subject}', [SubjectController::class, 'update'])->name('subjects.update');
     Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy'])->name('subjects.destroy');
 
-    // routes AssignSubject
+    // routes Assign/UnAssign Subjects
     Route::post('/students/assign-subjects', [StudentController::class, 'assignSubjects'])->name('assign.subjects');
     Route::post('students/unassign-subjects', [StudentController::class, 'unassignSubjects'])->name('unassign.subjects');
     Route::get('/students/{id}/available-subjects', [StudentController::class, 'getAvailableSubjects'])->name('get.available.subjects');
-
+    //Routes Assign/UnAssign subjects
     Route::post('/subjects/assign-students', [SubjectController::class, 'assignStudents'])->name('assign.students');
     Route::post('subjects/unassign-students', [SubjectController::class, 'unassignStudents'])->name('unassign.students');
     Route::get('/subjects/{id}/available-students', [SubjectController::class, 'getAvailableStudents'])->name('get.available.students');
 
+    //Bulk Delete Students
     Route::post('students/bulk-delete', [StudentController::class, 'bulkDelete'])->name('students.bulkDelete');
+    //Bulk Delete Subjects
+    Route::post('subjects/bulk-delete', [SubjectController::class, 'bulkDelete'])->name('subjects.bulkDelete');
 
 });
 

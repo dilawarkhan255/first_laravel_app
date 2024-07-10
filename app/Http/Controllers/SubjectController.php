@@ -111,4 +111,24 @@ class SubjectController extends Controller
         return response()->json($assignedStudents);
     }
 
+    public function bulkDelete(Request $request)
+    {
+        $ids = $request->input('ids');
+        $undeletedSubjects = [];
+
+        foreach ($ids as $id) {
+            $subject = Subject::with('students')->find($id);
+            if ($subject->students->isEmpty()) {
+                $subject->delete();
+            } else {
+                $undeletedSubjects[] = $subject->name;
+            }
+        }
+
+        if (empty($undeletedSubjects)) {
+            return response()->json(['success' => 'Selected subjects have been deleted successfully.']);
+        } else {
+            return response()->json(['warning' => 'Some subjects were not deleted because they have assigned to Students: ' . implode(', ', $undeletedSubjects)]);
+        }
+    }
 }

@@ -7,6 +7,7 @@ use App\Models\JobDesignation;
 use Illuminate\Http\Request;
 use App\Models\JobListing;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Str;
 
 class JobsController extends Controller
 {
@@ -67,15 +68,19 @@ class JobsController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'title' => 'required|max:255',
             'company' => 'required|max:255',
-            // 'designation' => 'required|max:255',
             'description' => 'required',
             'location' => 'required|max:255',
+            'designation_id' => 'required'
         ]);
 
-        $job = JobListing::create($request->all());
+        $validatedData['slug'] = 'dummy';
+        $job = JobListing::create($validatedData);
+
+        $job->slug = Str::slug($request->title . '_' . $job->id);
+        $job->save();
 
         return redirect()->route('jobs.index')->with('success', 'Job created successfully.');
     }
@@ -88,15 +93,24 @@ class JobsController extends Controller
 
     public function update(Request $request, JobListing $job)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'title' => 'required|max:255',
             'company' => 'required|max:255',
-            // 'designation' => 'required|max:255',
             'description' => 'required',
             'location' => 'required|max:255',
         ]);
 
-        $job->update($request->all());
+        if(empty($job->slug)){
+            $job->slug = Str::slug($request->title. '_' . $job->id);
+            $job->save();
+        }
+        elseif($request->name != $job->name){
+
+            $job->slug = Str::slug($request->title. '_' . $job->id);
+            $job->save();
+        }
+
+        $job->update($validatedData);
 
         return redirect()->route('jobs.index')->with('success', 'Job updated successfully.');
     }

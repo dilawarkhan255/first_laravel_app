@@ -13,9 +13,8 @@
     @endif
 
     <div class="container">
-        <h1>Students List</h1>
-        <button class="btn btn-danger btn-sm mt-2 mb-2" id="bulkDeleteBtn" onclick="bulkDelete()">Delete Selected</button>
-        <div class="table-responsive">
+        <strong class="mb-3">Students List</strong> <button class="btn btn-danger btn-sm mt-2 mb-3 ml-2" id="bulkDeleteBtn" onclick="bulkDelete()">Bulk Delete</button>
+        <div class="table-responsivee">
             <table id="studentTable" class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -99,6 +98,7 @@
                     }
                 ]
             });
+
             $('#masterCheckbox').on('click', function() {
                 if ($(this).is(':checked')) {
                     $('.rowCheckbox').prop('checked', true);
@@ -139,7 +139,13 @@
                             },
                             success: function(response) {
                                 if (response.success) {
-                                    window.location.href = '{{ route('students.index') }}';
+                                    swal("Success", response.success, "success").then(() => {
+                                        window.location.href = '{{ route('students.index') }}';
+                                    });
+                                } else if (response.warning) {
+                                    swal("Warning", response.warning, "warning").then(() => {
+                                        window.location.href = '{{ route('students.index') }}';
+                                    });
                                 }
                             }
                         });
@@ -149,6 +155,7 @@
                 swal("Please select at least one record.");
             }
         }
+
     </script>
     <script>
         var subject_ids_array = [];
@@ -175,8 +182,6 @@
                             $('#subjects').append(option);
                         }
                     });
-
-
 
                     choicesInstance = new Choices('#subjects');
                     $('#assignSubjectsModal').modal('show');
