@@ -13,9 +13,10 @@ class HomeController extends Controller
         return view('home', compact('jobs'));
     }
 
-    public function job_details($id)
+    public function job_details($slug)
     {
-        $job = JobListing::findOrFail($id);
+        $job = JobListing::where('slug', $slug)->first();
         return view('job_details', ['job' => $job]);
     }
+
 }

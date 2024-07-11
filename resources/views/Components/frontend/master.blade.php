@@ -1,6 +1,7 @@
 <html>
     <head>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 
         <style>
             .carousel-item img {
@@ -9,21 +10,70 @@
             object-fit: cover;
             }
 
-                .header_back {
-                    background-color: #073964;
-                    opacity: .85;
-                    color: white;
-                }
+            .header_back {
+                /* background-color: #cccccc; */
+                opacity: .85;
+                color: white;
+            }
 
-                h3.card-logo-dark {
-                    color: white;
-                }
+            h3.card-logo-dark {
+                color: white;
+            }
 
-                #w_word {
-                    color: #2a6ba3;
+            #w_word {
+                color: #2a6ba3;
+            }
+            .navbar-collapse {
+            flex-grow: 0 !important;
                 }
-                .navbar-collapse {
-                flex-grow: 0 !important;
+            .homecard {
+            transition:  0.3s ease-in;
+            cursor: pointer;
+            }
+            .homecard:hover {
+                transform: scale(1.05);
+                box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+            }
+
+            .overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.6);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #030303;
+            }
+
+            .overlay h1,
+            .overlay p {
+                margin-bottom: 0;
+            }
+            .text-left a{
+                text-decoration: none;
+                font: bold;
+                color: #030303;
+            }
+
+            .banner-image {
+                height: 200px;
+                object-fit: cover;
+            }
+
+            .overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5); /* optional, for better text visibility */
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
             }
         </style>
     </head>
@@ -35,3 +85,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     </body>
 </html>
+
+
+

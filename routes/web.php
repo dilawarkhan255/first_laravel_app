@@ -12,7 +12,7 @@ use App\Models\Subject;
 
 
 Route::get('/', [HomeController::class, 'home'])->name('home');
-Route::get('/job/{job}', [HomeController::class, 'job_details'])->name('job_details');
+Route::get('/job/{slug}', [HomeController::class, 'job_details'])->name('job_details');
 
 //Jobs Routes
 Route::middleware('auth')->group(function () {

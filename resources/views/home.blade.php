@@ -36,10 +36,6 @@
                     <a  class="nav-link rounded-md {{ Request::is('register') ? 'bg-gray-900 text-white' : 'text-gray-300 ' }}" href="/register" style="text-decoration:none;  color: #f5f5f5;">Register</a>
                 </li> --}}
             </ul>
-
-            {{-- <div class="">
-            <a href="apps-nft-wallet" class="btn btn-success">Wallet Connect</a>
-        </div> --}}
         </div>
 
     </div>
@@ -78,7 +74,7 @@
         <div class="row">
             @foreach ($jobs as $job)
             <div class="col-md-3 mb-4">
-                <div class="card h-100 shadow-sm" style="border-radius: 15px;">
+                <div class="card h-100 shadow-sm homecard" style="border-radius: 15px;">
                     <div class="card-header bg-transparent border-bottom-0 text-center">
                         <p><a href="#!" class="text-dark fw-bold ">{{ $job->title }}</a></p>
                     </div>
@@ -89,7 +85,7 @@
                     </div>
                     <div class="card-footer bg-transparent border-top-0">
                         <div class="d-flex justify-content-between align-items-center">
-                            <a href="{{ route('job_details', ['job' => $job->id]) }}" class="btn btn-sm btn-outline-primary">View Details</a>
+                            <a href="{{ route('job_details', ['slug' => $job->slug]) }}" class="btn btn-sm btn-outline-primary">View Details</a>
                         </div>
                     </div>
                 </div>
