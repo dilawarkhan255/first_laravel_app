@@ -132,3 +132,7 @@ class SubjectController extends Controller
         }
     }
 }
+
+// ->skip($request->input('skip'))
+// ->take($request->input('take'))
+// ->get();

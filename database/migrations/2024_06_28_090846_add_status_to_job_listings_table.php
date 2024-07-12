@@ -12,7 +12,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('job_listings', function (Blueprint $table) {
-            $table->boolean('status')->default(true); // or use enum('enabled', 'disabled')
+            $table->boolean('status')->default(true);
         });
     }
 

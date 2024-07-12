@@ -29,10 +29,10 @@
                     <a class="nav-link {{ $current == url('/') ? 'active' : ''  }} {{ $current != url('/') ? 'header_class' : '' }}"
                         href="/" style="color: #2f6293;">Home</a>
                 </li>
-                {{-- <li class="nav-item">
-                    <a class="nav-link rounded-md {{ Request::is('login') ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-500' }}" href="/login" style="text-decoration:none; color: #f5f5f5;">Log In</a>
-                </li>
                 <li class="nav-item">
+                    <a class="nav-link {{ Request::is('/view_job') ? 'active' : '' }}" href="/view_job" style="color: #2f6293;">View Job</a>
+                </li>
+                {{-- <li class="nav-item">
                     <a  class="nav-link rounded-md {{ Request::is('register') ? 'bg-gray-900 text-white' : 'text-gray-300 ' }}" href="/register" style="text-decoration:none;  color: #f5f5f5;">Register</a>
                 </li> --}}
             </ul>
@@ -70,28 +70,32 @@
 
 
     <!-- Card Section -->
-    <section class="container mt-5">
+    <section class="container mt-5 mb-5">
         <div class="row">
             @foreach ($jobs as $job)
-            <div class="col-md-3 mb-4">
-                <div class="card h-100 shadow-sm homecard" style="border-radius: 15px;">
-                    <div class="card-header bg-transparent border-bottom-0 text-center">
-                        <p><a href="#!" class="text-dark fw-bold ">{{ $job->title }}</a></p>
+                <div class="col-md-4 mb-4">
+                    <div class="card homecard " style="width: 18rem;">
+                        <div class="card-body">
+                            <div class="card-header bg-transparent border-bottom-0 text-center">
+                                <p><a href="#!" class="text-dark fw-bold ">{{ $job->title }}</a></p>
+                            </div>
+                            <div class="card-body">
+                                <p class="small text-muted">Company: {{ $job->company }}</p>
+                                <p class="small text-muted">Location: {{ $job->location }}</p>
+                                <p class="small text-muted">Posted: {{ \Carbon\Carbon::parse($job->created_at)->format('M d, Y') }}</p>
+                            </div>
+                            <div class="card-footer bg-transparent border-top-0">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <a href="{{ route('job_details', ['slug' => $job->slug]) }}" class="btn btn-sm btn-outline-primary">View Details</a>
+                                </div>
+                            </div>
                     </div>
-                    <div class="card-body">
-                        <p class="small text-muted">Company: {{ $job->company }}</p>
-                        <p class="small text-muted">Location: {{ $job->location }}</p>
-                        <p class="small text-muted">Posted: {{ \Carbon\Carbon::parse($job->created_at)->format('M d, Y') }}</p>
-                    </div>
-                    <div class="card-footer bg-transparent border-top-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <a href="{{ route('job_details', ['slug' => $job->slug]) }}" class="btn btn-sm btn-outline-primary">View Details</a>
-                        </div>
                     </div>
                 </div>
-            </div>
             @endforeach
         </div>
+
+
     </section>
 
 @endsection

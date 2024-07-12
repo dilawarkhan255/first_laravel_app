@@ -13,6 +13,8 @@ use App\Models\Subject;
 
 Route::get('/', [HomeController::class, 'home'])->name('home');
 Route::get('/job/{slug}', [HomeController::class, 'job_details'])->name('job_details');
+Route::get('/view_job', [HomeController::class, 'view_job'])->name('view_job');
+Route::post('/load-more-jobs', [HomeController::class, 'loadmorejobs'])->name('loadmorejobs');
 
 //Jobs Routes
 Route::middleware('auth')->group(function () {
