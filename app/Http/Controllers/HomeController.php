@@ -24,23 +24,27 @@ class HomeController extends Controller
 
     public function view_job()
     {
-        $jobs = JobListing::orderBy('created_at', 'desc')->take(6)->get();
+        $jobs = JobListing::where('status', 'enabled')->orderBy('created_at', 'desc')->take(6)->get();
         return view('view_job', compact('jobs'));
     }
+
 
     public function loadmorejobs(Request $request)
     {
         $start = $request->input('start');
 
-        $jobs = JobListing::orderBy('created_at', 'desc')
+        $jobs = JobListing::where('status', 'enabled')
+            ->orderBy('created_at', 'desc')
             ->offset($start)
             ->limit(6)
             ->get();
 
+        $totalJobs = JobListing::where('status', 'enabled')->count();
+
         return response()->json([
             'jobs' => $jobs,
-            'next' => $start + 6
+            'next' => $start + 5,
+            'total' => $totalJobs
         ]);
     }
-
 }

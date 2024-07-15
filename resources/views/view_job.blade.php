@@ -49,13 +49,13 @@
         @endforeach
     </div>
     <div class="text-center">
-        <button id="load-more" class="btn btn-primary">Load More</button>
+        <button id="load-more" class="btn btn-primary" style="{{ count($jobs) < 6 ? 'display:none;' : '' }}">Load More</button>
     </div>
 </section>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        let start = 6;
+        let start = 5;
         const take = 6;
         const jobCards = document.getElementById('job-cards');
         const loadMoreButton = document.getElementById('load-more');
@@ -71,9 +71,6 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.jobs.length < take) {
-                    loadMoreButton.style.display = 'none';
-                }
                 data.jobs.forEach(job => {
                     const card = `
                         <div class="col-md-4 mb-4">
@@ -98,6 +95,11 @@
                     `;
                     jobCards.insertAdjacentHTML('beforeend', card);
                 });
+
+                if (data.jobs.length < take || (start + take) >= data.total) {
+                    loadMoreButton.style.display = 'none';
+                }
+
                 start = data.next;
             });
         }
@@ -105,8 +107,13 @@
         loadMoreButton.addEventListener('click', function () {
             loadJobs(start, take);
         });
+
+        if (start >= {{ $jobs->count() }}) {
+            loadMoreButton.style.display = 'none';
+        }
     });
 </script>
+
 
 
 

@@ -9,7 +9,7 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Models\Subject;
-
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', [HomeController::class, 'home'])->name('home');
 Route::get('/job/{slug}', [HomeController::class, 'job_details'])->name('job_details');
@@ -27,17 +27,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/jobs/{job}', [JobsController::class, 'show'])->name('jobs.show');
     Route::delete('/jobs/{job}', [JobsController::class, 'destroy'])->name('jobs.destroy');
     Route::put('/jobs/{job}/status', [JobsController::class, 'status'])->name('jobs.status');
-    Route::post('/logout', [SessionController::class, 'destroy'])->name('logout');
+    // Route::post('/logout', [SessionController::class, 'destroy'])->name('logout');
     //Status of Job Route
     Route::put('/jobs/{job}/status', [JobsController::class, 'status'])->name('jobs.status');
 });
 
 
 // Auth Routes
-Route::get('/register', [RegisterUserController::class, 'create'])->name('register');
-Route::post('/register', [RegisterUserController::class, 'store'])->name('register');
-Route::get('/login', [SessionController::class, 'create'])->name('login');
-Route::post('/login', [SessionController::class, 'store'])->name('login');
+// Route::get('/register', [RegisterUserController::class, 'create'])->name('register');
+// Route::post('/register', [RegisterUserController::class, 'store'])->name('register');
+// Route::get('/login', [SessionController::class, 'create'])->name('login');
+// Route::post('/login', [SessionController::class, 'store'])->name('login');
+Auth::routes(['verify' => true]);
+
 
 //Job Designations Routes
 Route::middleware('auth')->group(function () {

@@ -40,11 +40,19 @@
                                 <label for="password">Password</label>
                                 <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
                             </div>
-                            <div>
-                                <button type="submit" class="btn btn-primary">Login</button>
-                                <a href="{{ route('jobs.index') }}" class="btn btn-secondary ml-2">Back</a>
+                            <div class="form-group d-flex justify-content-between align-items-center">
+                                <div>
+                                    <button type="submit" class="btn btn-primary">Login</button>
+                                    <a href="{{ route('jobs.index') }}" class="btn btn-secondary ml-2">Back</a>
+                                </div>
+                                <div>
+                                    <a href="{{ route('password.request') }}">Forgot Password?</a>
+                                </div>
                             </div>
                         </form>
+                        <div class="mt-3 text-center">
+                            <a href="{{ route('register') }}">Don't have an account? Register</a>
+                        </div>
                     </div>
                 </div>
             </div>
