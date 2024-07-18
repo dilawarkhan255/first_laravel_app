@@ -26,18 +26,19 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mx-auto mt-2 mt-lg-0" id="navbar-example">
                 <li class="nav-item">
-                    <a class="nav-link {{ $current == url('/') ? 'active' : ''  }} {{ $current != url('/') ? 'header_class' : '' }}"
-                        href="/" style="color: #2f6293;">Home</a>
+                    <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="/" style="color: #2f6293;">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ Request::is('/view_job') ? 'active' : '' }}" href="/view_job" style="color: #2f6293;">View Job</a>
+                    <a class="nav-link {{ Request::is('view_job') ? 'active' : '' }}" href="/view_job" style="color: #2f6293;">View Job</a>
                 </li>
-                {{-- <li class="nav-item">
-                    <a  class="nav-link rounded-md {{ Request::is('register') ? 'bg-gray-900 text-white' : 'text-gray-300 ' }}" href="/register" style="text-decoration:none;  color: #f5f5f5;">Register</a>
-                </li> --}}
+                <li class="nav-item">
+                    <a class="nav-link {{ Request::is('login') ? 'active' : '' }}" href="/login" style="color: #2f6293;">Log In</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ Request::is('register') ? 'active' : '' }}" href="/register" style="color: #2f6293;">Register</a>
+                </li>
             </ul>
         </div>
-
     </div>
 </nav>
 <!-- Slider Section -->
