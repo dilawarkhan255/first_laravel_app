@@ -54,7 +54,7 @@
                 serverSide: true,
                 ajax: "{{ route('designations.index') }}",
                 columns: [
-                    { data: 'name', name: 'name' }, 
+                    { data: 'name', name: 'name' },
 
                     {
                         data: 'action',
@@ -67,7 +67,7 @@
                                 '<form action="' + row.delete_url + '" method="POST" style="display: inline;">' +
                                 '@csrf' +
                                 '@method("DELETE")' +
-                                '<i class="fas fa-trash show_confirm" style="cursor: pointer; color: #000000;"></i>' +
+                                '<i class="fas fa-trash show_confirm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" style="cursor: pointer; color: #000000;"></i>' +
                                 '</form>';
                         }
                     }

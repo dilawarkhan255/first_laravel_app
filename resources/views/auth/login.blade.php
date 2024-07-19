@@ -7,6 +7,8 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
     @if ($errors->any())
         <div class="alert alert-danger">
@@ -43,10 +45,19 @@
                                 <input type="checkbox" class="form-check-input" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
                                 <label class="form-check-label" for="remember">Remember Me</label>
                             </div>
-
                             <button type="submit" class="btn btn-primary">Login</button>
                             <a href="{{ route('jobs.index') }}" class="btn btn-secondary">Back</a>
                         </form>
+
+                        <div class="mt-3 text-center">
+                            <a href="{{ url('login/google') }}" class="text-danger">
+                                <i class="fab fa-google"></i>
+                            </a>
+                            <a href="{{ url('login/facebook') }}" class="text-primary ml-3">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                        </div>
+
                         <div class="mt-3">
                             <a href="{{ route('password.request') }}">Forgot Your Password?</a>
                         </div>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\SocialController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobDesignationController;
 use Illuminate\Support\Facades\Route;
@@ -8,6 +9,7 @@ use App\Http\Controllers\RegisterUserController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\UserController;
 use App\Models\Subject;
 use Illuminate\Support\Facades\Auth;
 
@@ -89,3 +91,8 @@ Route::middleware('auth')->group(function () {
 
 });
 
+    //Users Profile Image
+    Route::post('/upload-image', [UserController::class, 'uploadImage'])->name('user.upload_image');
+
+    Route::get('login/{provider}', [SocialController::class, 'redirectToProvider']);
+    Route::get('login/{provider}/callback', [SocialController::class, 'handleProviderCallback']);

@@ -85,7 +85,7 @@
                                    '<form action="' + row.delete_url + '" method="POST" style="display: inline;">' +
                                    '@csrf' +
                                    '@method("DELETE")' +
-                                   '<i class="fas fa-trash show_confirm" style="cursor: pointer;"></i>' +
+                                   '<i class="fas fa-trash show_confirm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" style="cursor: pointer;"></i>' +
                                    '</form>' +
                                    '<a href="javascript:void(0)" onclick="openAssignModal(' + row.id + ')" title="Assign Subjects"><i class="fa-solid fa-up-right-from-square" style="color: #000000; margin-left:3px;"></i></a>';
                         }

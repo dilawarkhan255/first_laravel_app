@@ -79,7 +79,7 @@
     <script>
         $(document).ready(function() {
             $('#jobTable').DataTable({
-                responsive: true, // Enable responsiveness
+                responsive: true,
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('jobs.index') }}",
@@ -103,7 +103,7 @@
                             return '<form action="' + row.status_url + '" method="POST" style="display: inline;">' +
                                     '@csrf' +
                                     '@method("PUT")' +
-                                    '<button type="submit" class="btn btn-sm ' + (data ? 'btn-success' : 'btn-danger') + '">' +
+                                    '<button type="submit" data-bs-toggle="tooltip" data-bs-placement="top" title="Enable/Disable" class="btn btn-sm ' + (data ? 'btn-success' : 'btn-danger') + '">' +
                                     (data ? 'Enable' : 'Disable') + '</button>' +
                                 '</form>';
                         }
@@ -119,7 +119,7 @@
                                 '<form action="' + row.delete_url + '" method="POST" style="display: inline;">' +
                                 '@csrf' +
                                 '@method("DELETE")' +
-                                '<i class="fas fa-trash show_confirm" style="cursor: pointer;"></i>' +
+                                '<i class="fas fa-trash show_confirm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" style="cursor: pointer;"></i>' +
                                 '</form>';
                         }
                     }
