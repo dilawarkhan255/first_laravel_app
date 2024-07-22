@@ -53,7 +53,7 @@
                             <a href="{{ url('login/google') }}" class="text-danger">
                                 <i class="fab fa-google"></i>
                             </a>
-                            <a href="{{ url('login/facebook') }}" class="text-primary ml-3">
+                            <a href="#" class="text-primary ml-3" aria-label="Login with Facebook">
                                 <i class="fab fa-facebook-f"></i>
                             </a>
                         </div>

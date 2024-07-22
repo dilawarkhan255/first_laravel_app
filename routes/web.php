@@ -12,6 +12,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\UserController;
 use App\Models\Subject;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Socialite\Facades\Socialite;
 
 Route::get('/', [HomeController::class, 'home'])->name('home');
 Route::get('/job/{slug}', [HomeController::class, 'job_details'])->name('job_details');
@@ -94,5 +95,8 @@ Route::middleware('auth')->group(function () {
     //Users Profile Image
     Route::post('/upload-image', [UserController::class, 'uploadImage'])->name('user.upload_image');
 
-    Route::get('login/{provider}', [SocialController::class, 'redirectToProvider']);
-    Route::get('login/{provider}/callback', [SocialController::class, 'handleProviderCallback']);
+    Route::get('login/{provider}', [SocialController::class, 'redirect'])->name('auth.redirect');
+    Route::get('login/{provider}/callback', [SocialController::class, 'callBack'])->name('auth.callback');
+
+
+

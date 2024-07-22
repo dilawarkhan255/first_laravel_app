@@ -24,8 +24,9 @@ class HomeController extends Controller
 
     public function view_job()
     {
-        $jobs = JobListing::where('status', 'enabled')->orderBy('created_at', 'desc')->take(6)->get();
-        return view('view_job', compact('jobs'));
+        $jobs = JobListing::where('status', 'enabled')->orderBy('created_at', 'asc')->take(3)->get();
+        $totalJobs = JobListing::where('status', 'enabled')->count();
+        return view('view_job', compact('jobs', 'totalJobs'));
     }
 
 
@@ -34,17 +35,21 @@ class HomeController extends Controller
         $start = $request->input('start');
 
         $jobs = JobListing::where('status', 'enabled')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('created_at', 'asc')
             ->offset($start)
-            ->limit(6)
+            ->limit(3)
             ->get();
-
+        $all_loaded = false;
+        $next = $start + 3;
         $totalJobs = JobListing::where('status', 'enabled')->count();
-
+        if($next >= $totalJobs){
+            $all_loaded = true;
+        }
         return response()->json([
             'jobs' => $jobs,
-            'next' => $start + 5,
-            'total' => $totalJobs
+            'next' => $next,
+            'totalJobs' => $totalJobs,
+            'all_loaded' => $all_loaded
         ]);
     }
 }

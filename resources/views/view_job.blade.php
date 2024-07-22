@@ -19,7 +19,7 @@
 
         <!-- Home Link -->
         <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="/">Home</a>
-        <a class="nav-link {{ Request::is('/view_job') ? 'active' : '' }}" href="/view_job">View Job</a>
+        <a class="nav-link {{ Request::is('/view_job') ? 'active' : '' }}" href="/view_job">Jobs</a>
     </div>
 </nav>
 
@@ -40,7 +40,7 @@
                         </div>
                         <div class="card-footer bg-transparent border-top-0">
                             <div class="d-flex justify-content-between align-items-center">
-                                <a href="/job-details/{{ $job->slug }}" class="btn btn-sm btn-outline-primary">View Details</a>
+                                <a href="{{ route('job_details', ['slug' => $job->slug]) }}" class="btn btn-sm btn-outline-primary">View Details</a>
                             </div>
                         </div>
                     </div>
@@ -48,18 +48,28 @@
             </div>
         @endforeach
     </div>
-    <div class="text-center">
-        <button id="load-more" class="btn btn-primary" style="{{ count($jobs) < 6 ? 'display:none;' : '' }}">Load More</button>
+    <div class="d-flex justify-content-center mt-4">
+        <button id="load-more" class="btn btn-primary">Load More</button>
     </div>
 </section>
 
 <script>
+    var all_loaded = false;
+    var jobsCount = '{{ $totalJobs }}';
+
+    if(jobsCount <= 3){
+        loadMoreButton.style.display = 'none';
+    }
     document.addEventListener('DOMContentLoaded', function () {
-        let start = 5;
-        const take = 6;
+        let start = 0;
+        const take = 3;
         const jobCards = document.getElementById('job-cards');
         const loadMoreButton = document.getElementById('load-more');
 
+        loadMoreButton.addEventListener('click', function () {
+            start = parseInt(start) + parseInt(3);
+            loadJobs(start, take);
+        });
         function loadJobs(start, take) {
             fetch('{{ route('loadmorejobs') }}', {
                 method: 'POST',
@@ -86,7 +96,7 @@
                                     </div>
                                     <div class="card-footer bg-transparent border-top-0">
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <a href="/job-details/${job.slug}" class="btn btn-sm btn-outline-primary">View Details</a>
+                                            <a href="{{ route('job_details', ['slug' => $job->slug]) }}" class="btn btn-sm btn-outline-primary">View Details</a>
                                         </div>
                                     </div>
                                 </div>
@@ -96,25 +106,15 @@
                     jobCards.insertAdjacentHTML('beforeend', card);
                 });
 
-                if (data.jobs.length < take || (start + take) >= data.total) {
+                if (data.all_loaded == true) {
                     loadMoreButton.style.display = 'none';
+                }else{
+                    loadMoreButton.style.display = 'block';
                 }
-
-                start = data.next;
             });
         }
 
-        loadMoreButton.addEventListener('click', function () {
-            loadJobs(start, take);
-        });
 
-        if (start >= {{ $jobs->count() }}) {
-            loadMoreButton.style.display = 'none';
-        }
     });
 </script>
-
-
-
-
 @endsection

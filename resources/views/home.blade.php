@@ -26,10 +26,10 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mx-auto mt-2 mt-lg-0" id="navbar-example">
                 <li class="nav-item">
-                    <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="/" style="color: #2f6293;">Home</a>
+                    <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="/" style="color: #2f6293">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ Request::is('view_job') ? 'active' : '' }}" href="/view_job" style="color: #2f6293;">View Job</a>
+                    <a class="nav-link {{ Request::is('view_job') ? 'active' : '' }}" href="/view_job" style="color: #2f6293;">Jobs</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {{ Request::is('login') ? 'active' : '' }}" href="/login" style="color: #2f6293;">Log In</a>

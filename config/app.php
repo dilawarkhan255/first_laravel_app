@@ -211,8 +211,9 @@ return [
     |
     */
 
-    'aliases' => Facade::defaultAliases()->merge(items:[
-        'DataTables' => \Yajra\DataTables\Facades\DataTables::class,
-    ])->toArray(),
+    'aliases' => Facade::defaultAliases()->merge([
+    'DataTables' => \Yajra\DataTables\Facades\DataTables::class,
+    'Socialite' => Laravel\Socialite\Facades\Socialite::class,
+        ])->toArray(),
 
 ];

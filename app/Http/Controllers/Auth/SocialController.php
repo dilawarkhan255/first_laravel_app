@@ -6,41 +6,34 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class SocialController extends Controller
 {
-    public function redirectToProvider($provider)
+    public function redirect($provider)
     {
-        return Socialite::driver($provider)->redirect();
+     return Socialite::driver($provider)->redirect();
     }
 
-    public function handleProviderCallback($provider)
-    {
-        try {
-            $user = Socialite::driver($provider)->user();
-        } catch (\Exception $e) {
-            return redirect('/login')->withErrors('Unable to authenticate.');
-        }
-
-        $existingUser = User::where('email', $user->getEmail())->first();
-        if ($existingUser) {
-            // Update provider ID and provider name if needed
-            $existingUser->update([
-                'provider_id' => $user->getId(),
-                'provider' => $provider,
-            ]);
-            Auth::login($existingUser);
-        } else {
-            // Create a new user
-            $newUser = User::create([
-                'name' => $user->getName(),
-                'email' => $user->getEmail(),
-                'provider_id' => $user->getId(),
-                'provider' => $provider,
-            ]);
-            Auth::login($newUser);
-        }
-
-        return redirect()->intended('/home');
-    }
+    public function callBack($provider){
+        $userSocial =   Socialite::driver($provider)->stateless()->user();
+        $users       =   User::where(['email' => $userSocial->getEmail()])->first();
+        if($users){
+                    Auth::login($users);
+                    // return redirect('/jobs/home');
+                }
+                else
+                {
+                    $users = User::create([
+                        'name' =>  $userSocial->getName(),
+                        'email' => $userSocial->getEmail(),
+                        'provider' => $provider,
+                        'provider_id' =>  $userSocial->getId(),
+                        'password' => Hash::make(Str::random(24)),
+                    ]);
+                    Auth::login($users);
+                }
+                return redirect()->route('jobs.home');
+            }
 }
