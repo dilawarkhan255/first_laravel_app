@@ -6,6 +6,7 @@ use App\Http\Controllers\JobDesignationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobsController;
 use App\Http\Controllers\RegisterUserController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
@@ -98,5 +99,7 @@ Route::middleware('auth')->group(function () {
     Route::get('login/{provider}', [SocialController::class, 'redirect'])->name('auth.redirect');
     Route::get('login/{provider}/callback', [SocialController::class, 'callBack'])->name('auth.callback');
 
-
+    Route::middleware('auth')->group(function () {
+        Route::resource('roles', RoleController::class);
+    });
 
