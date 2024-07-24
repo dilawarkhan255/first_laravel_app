@@ -22,7 +22,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">Edit</div>
+                    <div class="card-header">Edit Role</div>
                     <div class="card-body">
                         <form action="{{ route('roles.update', $role) }}" method="POST">
                             @csrf
@@ -34,6 +34,17 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+                            <div class="form-group">
+                                <label for="permissions">Permissions</label>
+                                <div>
+                                    @foreach ($permissions as $permission)
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="permission{{ $permission->name }}" name="permission[]" >
+                                            <label class="form-check-label" for="permission">{{ $permission->name }}</label>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
                             <button type="submit" class="btn btn-primary">Update</button>
                             <a href="{{ route('roles.index') }}" class="btn btn-secondary ml-2">Back</a>
                         </form>
@@ -43,7 +54,8 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS and dependencies (optional) -->
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
 </x-layout>

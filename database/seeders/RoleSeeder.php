@@ -2,31 +2,35 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
-class PermissionsSeeder extends Seeder
+class RoleSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
+        // Create roles
+        $superAdmin = Role::create(['name' => 'Super Admin']);
+        $admin = Role::create(['name' => 'Admin']);
+        // $productManager = Role::create(['name' => 'Product Manager']);
+
         $permissions = [
-            // Jobs permissions
             'create-jobs',
             'edit-jobs',
             'delete-jobs',
             'view-jobs',
             'bulk-delete-jobs',
 
-            // Designations permissions
             'create-designations',
             'edit-designations',
             'delete-designations',
             'view-designations',
 
-            // Students permissions
             'create-students',
             'edit-students',
             'delete-students',
@@ -35,7 +39,6 @@ class PermissionsSeeder extends Seeder
             'assign-subjects-to-students',
             'unassign-subjects-from-students',
 
-            // Subjects permissions
             'create-subjects',
             'edit-subjects',
             'delete-subjects',
@@ -44,15 +47,20 @@ class PermissionsSeeder extends Seeder
             'assign-students-to-subjects',
             'unassign-students-from-subjects',
 
-            // Roles permissions
             'create-roles',
             'edit-roles',
             'delete-roles',
             'view-roles',
         ];
 
-        foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
-        }
+        // Assign all permissions to Admin
+        $admin->givePermissionTo($permissions);
+
+        // // Assign product-related permissions to Product Manager
+        // $productManager->givePermissionTo([
+        //     'create-product',
+        //     'edit-product',
+        //     'delete-product'
+        // ]);
     }
 }

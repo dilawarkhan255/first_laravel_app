@@ -9,6 +9,16 @@ use Yajra\DataTables\Facades\DataTables;
 
 class JobDesignationController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware(['permission:designations-list|designations-create|designations-edit|designations-delete'], ['only' => ['index', 'show']]);
+        $this->middleware(['permission:designations-create'], ['only' => ['create', 'store']]);
+        $this->middleware(['permission:designations-edit'], ['only' => ['edit', 'update']]);
+        $this->middleware(['permission:designations-show'], ['only' => ['show']]);
+        $this->middleware(['permission:designations-delete'], ['only' => ['destroy']]);
+    }
+
     // public function index()
     // {
     //     $jobDesignations = JobDesignation::all();
@@ -40,13 +50,13 @@ class JobDesignationController extends Controller
         return view('designations.index');
     }
 
-    
+
 
     public function show(JobDesignation $jobDesignation)
     {
         return view('designations.show', ['designation' => $jobDesignation]);
     }
-    
+
     public function create()
     {
         return view('designations.create');
@@ -62,7 +72,7 @@ class JobDesignationController extends Controller
 
         return redirect()->route('designations.index')->with('success', 'Designation created successfully.');
     }
-    
+
     public function edit(JobDesignation $jobDesignation)
     {
         return view('designations.edit', ['jobDesignation' => $jobDesignation]);
@@ -73,12 +83,12 @@ class JobDesignationController extends Controller
         $request->validate([
             'name' => 'required|max:255',
         ]);
-    
+
         $jobDesignation->update($request->all());
-    
+
         return redirect()->route('designations.index')->with('success', 'Designation updated successfully.');
     }
-    
+
 
     public function destroy(JobDesignation $jobDesignation)
     {

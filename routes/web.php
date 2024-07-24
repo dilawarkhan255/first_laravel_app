@@ -101,5 +101,6 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('auth')->group(function () {
         Route::resource('roles', RoleController::class);
+        Route::resource('users', UserController::class);
     });
 

@@ -11,6 +11,16 @@ use Illuminate\Support\Str;
 
 class JobsController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware(['permission:jobs-list|jobs-create|jobs-edit|jobs-delete'], ['only' => ['index', 'show']]);
+        $this->middleware(['permission:jobs-create'], ['only' => ['create', 'store']]);
+        $this->middleware(['permission:jobs-edit'], ['only' => ['edit', 'update']]);
+        $this->middleware(['permission:jobs-show'], ['only' => ['show']]);
+        $this->middleware(['permission:jobs-delete'], ['only' => ['destroy']]);
+    }
+
     public function home()
     {
         return view('jobs.home');

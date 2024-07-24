@@ -27,6 +27,7 @@
                                         <a href="/students" class="rounded-md {{ Request::is('students') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" style="text-decoration:none;">Students</a>
                                         <a href="/subjects" class="rounded-md {{ Request::is('subjects') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" style="text-decoration:none;">Subjects</a>
                                         <a href="/roles" class="rounded-md {{ Request::is('roles') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" aria-current="page" style="text-decoration:none;">Roles</a>
+                                        <a href="/users" class="rounded-md {{ Request::is('users') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" aria-current="page" style="text-decoration:none;">Users</a>
                                     @endauth
                                 </div>
                             </div>
