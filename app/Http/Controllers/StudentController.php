@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Session;
 
 class StudentController extends Controller
 {
+    function __construct()
+    {
+         $this->middleware('permission:list-students|create-students|edit-students|delete-students', ['only' => ['index','store']]);
+         $this->middleware('permission:create-students', ['only' => ['create','store']]);
+         $this->middleware('permission:edit-students', ['only' => ['edit','update']]);
+         $this->middleware('permission:delete-students', ['only' => ['destroy']]);
+    }
 
 // public function index()
 // {

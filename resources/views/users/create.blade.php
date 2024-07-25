@@ -1,7 +1,7 @@
 <x-layout>
     <x-slot name="heading">
         <div class="d-flex justify-content-between align-items-center">
-            <h2 class="mb-0">Create Student</h2>
+            <h2 class="mb-0">Create User</h2>
         </div>
     </x-slot>
 
@@ -36,7 +36,7 @@
                         <div class="mb-3 row">
                             <label for="name" class="col-md-4 col-form-label text-md-end text-start">Name</label>
                             <div class="col-md-6">
-                              <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}">
+                                <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}">
                                 @if ($errors->has('name'))
                                     <span class="text-danger">{{ $errors->first('name') }}</span>
                                 @endif
@@ -46,7 +46,7 @@
                         <div class="mb-3 row">
                             <label for="email" class="col-md-4 col-form-label text-md-end text-start">Email Address</label>
                             <div class="col-md-6">
-                              <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}">
+                                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}">
                                 @if ($errors->has('email'))
                                     <span class="text-danger">{{ $errors->first('email') }}</span>
                                 @endif
@@ -56,7 +56,7 @@
                         <div class="mb-3 row">
                             <label for="password" class="col-md-4 col-form-label text-md-end text-start">Password</label>
                             <div class="col-md-6">
-                              <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password">
+                                <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password">
                                 @if ($errors->has('password'))
                                     <span class="text-danger">{{ $errors->first('password') }}</span>
                                 @endif
@@ -66,35 +66,21 @@
                         <div class="mb-3 row">
                             <label for="password_confirmation" class="col-md-4 col-form-label text-md-end text-start">Confirm Password</label>
                             <div class="col-md-6">
-                              <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
+                                <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
                             </div>
                         </div>
 
                         <div class="mb-3 row">
                             <label for="roles" class="col-md-4 col-form-label text-md-end text-start">Roles</label>
                             <div class="col-md-6">
-                                {{-- <select class="form-select @error('roles') is-invalid @enderror" multiple aria-label="Roles" id="roles" name="roles[]">
-                                    @forelse ($roles as $role)
-
-                                        @if ($role!='Super Admin')
-                                            <option value="{{ $role }}" {{ in_array($role, old('roles') ?? []) ? 'selected' : '' }}>
-                                            {{ $role }}
-                                            </option>
-                                        @else
-                                            @if (Auth::user()->hasRole('Super Admin'))
-                                                <option value="{{ $role }}" {{ in_array($role, old('roles') ?? []) ? 'selected' : '' }}>
-                                                {{ $role }}
-                                                </option>
-                                            @endif
-                                        @endif
-
-                                    @empty
-
-                                    @endforelse
+                                <select class="form-control" id="role_id" name="role_id" required>
+                                    <option value="">Select Role</option>
+                                    @foreach ($roles as $role)
+                                        <option value="{{ $role->id }}" >
+                                            {{ $role->name }}
+                                        </option>
+                                    @endforeach
                                 </select>
-                                @if ($errors->has('roles'))
-                                    <span class="text-danger">{{ $errors->first('roles') }}</span>
-                                @endif --}}
                             </div>
                         </div>
 
@@ -109,6 +95,8 @@
     </div>
 
     <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </x-layout>

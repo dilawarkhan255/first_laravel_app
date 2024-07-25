@@ -38,17 +38,13 @@
                         <div class="mb-3 row">
                             <label for="roles" class="col-md-4 col-form-label text-md-end text-start"><strong>Roles:</strong></label>
                             <div class="col-md-6" style="line-height: 35px;">
-                            @php
-                                $roles = $user->roles ?? collect();
-                            @endphp
-                            @forelse ($roles as $role)
-                                <span class="badge bg-primary">{{ $role->name }}</span>
+                                @forelse ($user->getRoleNames() as $role)
+                            <span class="badge bg-primary">{{ $role }}</span>
                             @empty
-                                <span>No roles assigned</span>
                             @endforelse
-
                             </div>
                         </div>
+                    </div>
                 </div>
             </div>
         </div>

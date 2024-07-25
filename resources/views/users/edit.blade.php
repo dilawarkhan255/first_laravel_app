@@ -74,28 +74,13 @@
                         <div class="mb-3 row">
                             <label for="roles" class="col-md-4 col-form-label text-md-end text-start">Roles</label>
                             <div class="col-md-6">
-                                <select class="form-select @error('roles') is-invalid @enderror" multiple aria-label="Roles" id="roles" name="roles[]">
-                                    @forelse ($roles as $role)
-
-                                        @if ($role!='Super Admin')
-                                        <option value="{{ $role }}" {{ in_array($role, $userRoles ?? []) ? 'selected' : '' }}>
-                                            {{ $role }}
+                                <select class="form-control" id="role_id" name="role_id" required>
+                                    @foreach ($roles as $role)
+                                        <option value="{{ $role->id }}" {{ $role->id == $user->role_id ? 'selected' : '' }}>
+                                            {{ $role->name }}
                                         </option>
-                                        @else
-                                            @if (Auth::user()->hasRole('Super Admin'))
-                                            <option value="{{ $role }}" {{ in_array($role, $userRoles ?? []) ? 'selected' : '' }}>
-                                                {{ $role }}
-                                            </option>
-                                            @endif
-                                        @endif
-
-                                    @empty
-
-                                    @endforelse
+                                    @endforeach
                                 </select>
-                                @if ($errors->has('roles'))
-                                    <span class="text-danger">{{ $errors->first('roles') }}</span>
-                                @endif
                             </div>
                         </div>
 

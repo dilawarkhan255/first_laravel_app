@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Foundation\Auth\User;
+use App\Models\User;
 use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Role;
 use App\Http\Requests\StoreUserRequest;
@@ -15,6 +16,15 @@ use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('permission:list-users|create-users|edit-users|delete-users');
+        $this->middleware('permission:create-users');
+        $this->middleware('permission:edit-users');
+        $this->middleware('permission:delete-users');
+    }
+
     public function uploadImage(Request $request)
     {
         $request->validate([
@@ -42,18 +52,27 @@ class UserController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('roles', function($row){
-                    return $row->roles->pluck('name')->toArray();
+                    return $row->getRoleNames()->pluck('name')->toArray();
                 })
-                ->addColumn('action', function($row){
-                    $show_url = route('users.show', $row->id);
-                    $edit_url = route('users.edit', $row->id);
-                    $delete_url = route('users.destroy', $row->id);
-                    $can_edit = Auth::user()->can('edit-user');
-                    $can_delete = Auth::user()->can('delete-user');
-
-                    return compact('show_url', 'edit_url', 'delete_url', 'can_edit', 'can_delete');
+                ->addIndexColumn()
+                ->addColumn('show_url', function($row) {
+                    return route('users.show', $row->id);
                 })
-                ->rawColumns(['roles', 'action'])
+                ->addColumn('edit_url', function($row) {
+                    return route('users.edit', $row->id);
+                })
+                ->addColumn('delete_url', function($row) {
+                    return route('users.destroy', $row->id);
+                })
+                ->addColumn('action', function($row) {
+                    return '<a href="' . route('users.edit', $row->id) . '" class="edit btn btn-primary btn-sm">Edit</a>' .
+                           '<form action="' . route('users.destroy', $row->id) . '" method="POST" style="display:inline;">' .
+                           csrf_field() .
+                           method_field('DELETE') .
+                           '<button type="submit" class="delete btn btn-danger btn-sm">Delete</button>' .
+                           '</form>';
+                })
+                ->rawColumns(['action'])
                 ->make(true);
         }
 
@@ -68,7 +87,7 @@ class UserController extends Controller
     public function create(): View
     {
         return view('users.create', [
-            'roles' => Role::pluck('name')->all()
+            'roles' => Role::all()
         ]);
     }
 
@@ -101,17 +120,15 @@ class UserController extends Controller
      */
     public function edit(User $user): View
     {
-        // Check Only Super Admin can update his own Profile
-        if ($user->hasRole('Super Admin')) {
+        if ($user->hasRole('Admin')) {
             if ($user->id != auth()->user()->id) {
                 abort(403, 'USER DOES NOT HAVE THE RIGHT PERMISSIONS');
             }
         }
-
         return view('users.edit', [
             'user' => $user,
-            'roles' => Role::pluck('name')->all(),
-            'userRoles' => $user->roles->pluck('name')->all()
+            'roles' => Role::all(),
+            'userRoleIds' => $user->roles->pluck('id')->all()
         ]);
     }
 

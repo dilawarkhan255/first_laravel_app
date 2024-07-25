@@ -9,13 +9,12 @@ use Yajra\DataTables\Facades\DataTables;
 
 class RoleController extends Controller
 {
-    public function __construct()
+    function __construct()
     {
-        $this->middleware('auth');
-        $this->middleware(['permission:role-list|role-create|role-edit|role-delete'], ['only' => ['index', 'store']]);
-        $this->middleware(['permission:role-create'], ['only' => ['create', 'store']]);
-        $this->middleware(['permission:role-edit'], ['only' => ['edit', 'update']]);
-        $this->middleware(['permission:role-delete'], ['only' => ['destroy']]);
+         $this->middleware('permission:list-roles|create-roles|edit-roles|delete-roles', ['only' => ['index','store']]);
+         $this->middleware('permission:create-roles', ['only' => ['create','store']]);
+         $this->middleware('permission:edit-roles', ['only' => ['edit','update']]);
+         $this->middleware('permission:delete-roles', ['only' => ['destroy']]);
     }
 
     public function index(Request $request)
@@ -56,15 +55,22 @@ class RoleController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $this->validate($request, [
             'name' => 'required|unique:roles,name',
-            'permissions' => 'required|array'
+            'permission' => 'required|array',
         ]);
 
-        $role = Role::create(['name' => $request->name]);
-        $role->syncPermissions($request->permissions);
+        $role = Role::create(['name' => $request->input('name')]);
 
-        return redirect()->route('roles.index')->with('success', 'Role created successfully.');
+        if (in_array('all', $request->input('permission'))) {
+            $permissions = Permission::all();
+        } else {
+            $permissions = Permission::whereIn('id', $request->input('permission'))->get();
+        }
+        $role->syncPermissions($permissions);
+
+        return redirect()->route('roles.index')
+                        ->with('success', 'Role created successfully');
     }
 
     public function show(Role $role)
@@ -84,11 +90,17 @@ class RoleController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:roles,name,' . $role->id,
-            'permissions' => 'required|array'
+            'permission' => 'required|array',
         ]);
 
         $role->update(['name' => $request->name]);
-        $role->syncPermissions($request->permissions);
+
+        if (in_array('all', $request->input('permission'))) {
+            $permissions = Permission::all();
+        } else {
+            $permissions = Permission::whereIn('id', $request->input('permission'))->get();
+        }
+        $role->syncPermissions($permissions);
 
         return redirect()->route('roles.index')->with('success', 'Role updated successfully.');
     }
