@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\SocialController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobDesignationController;
 use Illuminate\Support\Facades\Route;
@@ -22,7 +23,7 @@ Route::post('/load-more-jobs', [HomeController::class, 'loadmorejobs'])->name('l
 
 //Jobs Routes
 Route::middleware('auth')->group(function () {
-    Route::get('/jobs/home', [JobsController::class, 'home'])->name('jobs.home');
+    Route::get('/dashboard/home', [DashboardController::class, 'home'])->name('dashboard.home');
     Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
     Route::get('/jobs/create', [JobsController::class, 'create'])->name('jobs.create');
     Route::post('/jobs', [JobsController::class, 'store'])->name('jobs.store');

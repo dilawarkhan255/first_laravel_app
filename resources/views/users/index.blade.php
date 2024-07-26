@@ -65,8 +65,10 @@
                         data: 'roles',
                         name: 'roles',
                         render: function(data) {
-                            return data.map(role => '<span class="badge bg-primary">' + role.name + '</span>').join(' ');
-                        }
+                            return data.map(role => '<span class="badge badge-primary">' + role + '</span>').join(' ');
+                        },
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'action',
@@ -93,6 +95,7 @@
             });
         });
     </script>
+
 
     <!-- Delete Confirmation Script -->
     <script>

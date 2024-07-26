@@ -35,6 +35,6 @@ class SocialController extends Controller
                     ]);
                     Auth::login($users);
                 }
-                return redirect()->route('jobs.home');
+                return redirect()->route('dashboard.home');
             }
 }

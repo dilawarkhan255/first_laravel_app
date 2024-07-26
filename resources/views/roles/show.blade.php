@@ -22,7 +22,7 @@
                         <h4 class="mt-4">Permissions:</h4>
                         <ul>
                             @forelse ($role->permissions as $permission)
-                                <li>{{ $permission->name }}</li>
+                                <li  class="badge badge-primary">{{ $permission->name }}</li>
                             @empty
                                 <li>No permissions assigned</li>
                             @endforelse

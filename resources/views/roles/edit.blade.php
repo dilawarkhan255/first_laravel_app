@@ -45,14 +45,10 @@
                                     <label class="form-check-label" for="select-all">Select All</label>
                                 </div>
                                 <div>
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="all" name="permission[]" value="all">
-                                        <label class="form-check-label" for="all">All Permissions</label>
-                                    </div>
                                     @foreach ($permissions as $permission)
                                         <div class="form-check">
                                             <input type="checkbox" class="form-check-input" id="permission{{ $permission->id }}" name="permission[]" value="{{ $permission->id }}" {{ isset($rolePermissions) && in_array($permission->id, $rolePermissions) ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="permission{{ $permission->id }}">{{ $permission->name }}</label>
+                                            <label class="form-check-label badge badge-primary" for="permission{{ $permission->id }}">{{ $permission->name }}</label>
                                         </div>
                                     @endforeach
                                 </div>

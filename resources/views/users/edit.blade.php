@@ -1,7 +1,7 @@
 <x-layout>
     <x-slot name="heading">
         <div class="d-flex justify-content-between align-items-center">
-            <h2 class="mb-0">Edit Student</h2>
+            <h2 class="mb-0">Edit User</h2>
         </div>
     </x-slot>
 
@@ -37,20 +37,20 @@
                         <div class="mb-3 row">
                             <label for="name" class="col-md-4 col-form-label text-md-end text-start">Name</label>
                             <div class="col-md-6">
-                              <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ $user->name }}">
-                                @if ($errors->has('name'))
-                                    <span class="text-danger">{{ $errors->first('name') }}</span>
-                                @endif
+                              <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $user->name) }}">
+                                @error('name')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
 
                         <div class="mb-3 row">
                             <label for="email" class="col-md-4 col-form-label text-md-end text-start">Email Address</label>
                             <div class="col-md-6">
-                              <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ $user->email }}">
-                                @if ($errors->has('email'))
-                                    <span class="text-danger">{{ $errors->first('email') }}</span>
-                                @endif
+                              <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email', $user->email) }}">
+                                @error('email')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
 
@@ -58,9 +58,9 @@
                             <label for="password" class="col-md-4 col-form-label text-md-end text-start">Password</label>
                             <div class="col-md-6">
                               <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password">
-                                @if ($errors->has('password'))
-                                    <span class="text-danger">{{ $errors->first('password') }}</span>
-                                @endif
+                                @error('password')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
 
@@ -72,11 +72,11 @@
                         </div>
 
                         <div class="mb-3 row">
-                            <label for="roles" class="col-md-4 col-form-label text-md-end text-start">Roles</label>
+                            <label for="role_id" class="col-md-4 col-form-label text-md-end text-start">Role</label>
                             <div class="col-md-6">
-                                <select class="form-control" id="role_id" name="role_id" required>
+                                <select class="form-control" name="role_id" id="role">
                                     @foreach ($roles as $role)
-                                        <option value="{{ $role->id }}" {{ $role->id == $user->role_id ? 'selected' : '' }}>
+                                        <option value="{{ $role->id }}" {{ $role->id == $userRole->id ? 'selected' : '' }}>
                                             {{ $role->name }}
                                         </option>
                                     @endforeach
@@ -85,7 +85,7 @@
                         </div>
 
                         <div class="mb-3 row">
-                            <input type="submit" class="col-md-3 offset-md-5 btn btn-primary" value="Update User">
+                            <input type="submit" class="col-md-3 offset-md-5 btn btn-sm btn-primary" value="Update User">
                         </div>
 
                     </form>

@@ -12,7 +12,7 @@ class JobDesignationController extends Controller
     function __construct()
     {
         $this->middleware('auth');
-        $this->middleware(['permission:list-designations|create-designations|edit-designations|delete-designations'], ['only' => ['index', 'show']]);
+        $this->middleware(['permission:designations|create-designations|edit-designations|delete-designations'], ['only' => ['index', 'show']]);
         $this->middleware(['permission:create-designations'], ['only' => ['create', 'store']]);
         $this->middleware(['permission:edit-designations'], ['only' => ['edit', 'update']]);
         $this->middleware(['permission:show-designations'], ['only' => ['show']]);

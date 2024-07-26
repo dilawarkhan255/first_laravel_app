@@ -12,6 +12,7 @@ use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
@@ -50,10 +51,10 @@ class UserController extends Controller
         if ($request->ajax()) {
             $data = User::with('roles')->get();
             return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('roles', function($row){
-                    return $row->getRoleNames()->pluck('name')->toArray();
-                })
+            ->addIndexColumn()
+            ->addColumn('roles', function($user) {
+                return $user->getRoleNames()->toArray();
+            })
                 ->addIndexColumn()
                 ->addColumn('show_url', function($row) {
                     return route('users.show', $row->id);
@@ -100,7 +101,10 @@ class UserController extends Controller
         $input['password'] = Hash::make($request->password);
 
         $user = User::create($input);
-        $user->assignRole($request->roles);
+        $role = DB::table('roles')->find($request->role_id);
+        if($role){
+            $user->assignRole($role->name);
+        }
 
         return redirect()->route('users.index')
                 ->withSuccess('New user is added successfully.');
@@ -120,15 +124,13 @@ class UserController extends Controller
      */
     public function edit(User $user): View
     {
-        if ($user->hasRole('Admin')) {
-            if ($user->id != auth()->user()->id) {
-                abort(403, 'USER DOES NOT HAVE THE RIGHT PERMISSIONS');
-            }
-        }
+        $roles = Role::all();
+        $userRole = $user->roles->first();
+
         return view('users.edit', [
             'user' => $user,
-            'roles' => Role::all(),
-            'userRoleIds' => $user->roles->pluck('id')->all()
+            'roles' => $roles,
+            'userRole' => $userRole
         ]);
     }
 
@@ -146,11 +148,17 @@ class UserController extends Controller
         }
 
         $user->update($input);
-        $user->syncRoles($request->roles);
+
+        // Fetch the role using the Role model
+        $role = Role::find($request->role_id);
+        if ($role) {
+            $user->syncRoles([$role]); // Ensure correct role synchronization
+        }
 
         return redirect()->route('users.index')
                 ->withSuccess('User updated successfully');
     }
+
 
     /**
      * Remove the specified resource from storage.

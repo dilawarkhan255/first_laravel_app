@@ -14,16 +14,11 @@ class JobsController extends Controller
     function __construct()
     {
         $this->middleware('auth');
-        $this->middleware(['permission:list-jobs|create-jobs|edit-jobs|delete-jobs'], ['only' => ['index', 'show']]);
+        $this->middleware(['permission:jobs|create-jobs|edit-jobs|delete-jobs'], ['only' => ['index', 'show']]);
         $this->middleware(['permission:create-jobs'], ['only' => ['create', 'store']]);
         $this->middleware(['permission:edit-jobs'], ['only' => ['edit', 'update']]);
         $this->middleware(['permission:show-jobs'], ['only' => ['show']]);
         $this->middleware(['permission:delete-jobs'], ['only' => ['destroy']]);
-    }
-
-    public function home()
-    {
-        return view('jobs.home');
     }
 
     // public function index(Job_ListingDataTable $dataTable)

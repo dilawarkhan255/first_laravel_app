@@ -14,6 +14,7 @@ class PermissionsSeeder extends Seeder
     {
         $permissions = [
             // Jobs permissions
+            'jobs',
             'create-jobs',
             'edit-jobs',
             'delete-jobs',
@@ -21,12 +22,14 @@ class PermissionsSeeder extends Seeder
             'bulk-delete-jobs',
 
             // Designations permissions
+            'designations',
             'create-designations',
             'edit-designations',
             'delete-designations',
             'view-designations',
 
             // Students permissions
+            'students',
             'create-students',
             'edit-students',
             'delete-students',
@@ -36,6 +39,7 @@ class PermissionsSeeder extends Seeder
             'unassign-subjects-from-students',
 
             // Subjects permissions
+            'subjects',
             'create-subjects',
             'edit-subjects',
             'delete-subjects',
@@ -45,12 +49,14 @@ class PermissionsSeeder extends Seeder
             'unassign-students-from-subjects',
 
             // Roles permissions
+            'roles',
             'create-roles',
             'edit-roles',
             'delete-roles',
             'view-roles',
 
             //users permission
+            'users',
             'create-users',
             'edit-users',
             'delete-users',

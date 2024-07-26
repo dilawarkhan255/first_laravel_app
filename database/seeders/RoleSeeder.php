@@ -18,17 +18,20 @@ class RoleSeeder extends Seeder
         $admin = Role::create(['name' => 'Admin']);
 
         $permissions = [
+            'jobs',
             'create-jobs',
             'edit-jobs',
             'delete-jobs',
             'view-jobs',
             'bulk-delete-jobs',
 
+            'designations',
             'create-designations',
             'edit-designations',
             'delete-designations',
             'view-designations',
 
+            'students',
             'create-students',
             'edit-students',
             'delete-students',
@@ -37,6 +40,7 @@ class RoleSeeder extends Seeder
             'assign-subjects-to-students',
             'unassign-subjects-from-students',
 
+            'subjects',
             'create-subjects',
             'edit-subjects',
             'delete-subjects',
@@ -45,10 +49,17 @@ class RoleSeeder extends Seeder
             'assign-students-to-subjects',
             'unassign-students-from-subjects',
 
+            'roles',
             'create-roles',
             'edit-roles',
             'delete-roles',
             'view-roles',
+
+            'users',
+            'create-users',
+            'edit-users',
+            'delete-users',
+            'view-users',
         ];
 
         // Assign all permissions to Admin
