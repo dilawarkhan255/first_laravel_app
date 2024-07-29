@@ -96,7 +96,7 @@
                                     </div>
                                     <div class="card-footer bg-transparent border-top-0">
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <a href="{{ route('job_details', ['slug' => $job->slug]) }}" class="btn btn-sm btn-outline-primary">View Details</a>
+                                            <a href="/job_details/${job.slug}" class="btn btn-sm btn-outline-primary">View Details</a>
                                         </div>
                                     </div>
                                 </div>

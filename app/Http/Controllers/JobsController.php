@@ -3,11 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\Job_ListingDataTable;
+use App\Exports\JobsExport;
+use App\Imports\JobsImport;
+use App\Jobs\JobCSVData;
 use App\Models\JobDesignation;
 use Illuminate\Http\Request;
 use App\Models\JobListing;
+use Illuminate\Support\Facades\Bus;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 
 class JobsController extends Controller
 {
@@ -131,5 +136,21 @@ class JobsController extends Controller
     {
         $job->update(['status' => !$job->status]);
         return redirect()->back()->with('success', 'Job status updated successfully.');
+    }
+
+    public function export()
+    {
+        return Excel::download(new JobsExport, 'jobs.xlsx');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'csv' => 'required|file|mimes:csv,txt',
+        ]);
+        Excel::import(new JobsImport, $request->file('csv'));
+
+        return redirect()->route('jobs.index')
+                         ->with('success', 'CSV Import added to queue. It will update you once done.');
     }
 }

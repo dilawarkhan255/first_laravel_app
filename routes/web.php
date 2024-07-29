@@ -35,6 +35,9 @@ Route::middleware('auth')->group(function () {
     // Route::post('/logout', [SessionController::class, 'destroy'])->name('logout');
     //Status of Job Route
     Route::put('/jobs/{job}/status', [JobsController::class, 'status'])->name('jobs.status');
+
+    Route::get('/export', [JobsController::class, 'export'])->name('jobs.export');
+    Route::post('/import', [JobsController::class,'import'])->name('jobs.import');
 });
 
 

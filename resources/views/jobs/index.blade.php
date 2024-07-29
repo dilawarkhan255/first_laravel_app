@@ -5,14 +5,43 @@
             <a href="{{ route('jobs.create') }}" class="btn btn-primary btn-sm mb-3">Create</a>
         </div>
     </x-slot>
+
     @if (Session::has('success'))
         <div class="alert alert-success">
             {{ Session::get('success') }}
         </div>
     @endif
+
+    <!-- Import/Export Section -->
+    <div class="container mt-4">
+        <div class="d-flex justify-content-center mb-3">
+            <form method="post" action="{{ route('jobs.import') }}" enctype="multipart/form-data">
+                @csrf
+
+                @if ($message = Session::get('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                      <strong>{{ $message }}</strong>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                @endif
+
+                <div class="form-group">
+                    <strong>CSV File:</strong>
+                    <input type="file" name="csv" class="form-control" />
+                </div>
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-success btn-block">Import</button>
+                </div>
+            </form>
+            <form action="{{ route('jobs.export') }}" method="GET">
+                <button type="submit" class="btn btn-primary ml-3">Export Jobs</button>
+            </form>
+        </div>
+    </div>
+
     <div class="container">
-        <h1>Job Listings</h1>
-        <div class="table-responsivee">
+        <h1 class="mb-4">Job Listings</h1>
+        <div class="table-responsive">
             <table id="jobTable" class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -95,7 +124,6 @@
                         }
                     },
                     { data: 'location', name: 'location' },
-
                     {
                         data: 'status',
                         name: 'status',
