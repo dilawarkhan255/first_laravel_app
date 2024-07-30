@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobDesignationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobsController;
+use App\Http\Controllers\PDFController;
 use App\Http\Controllers\RegisterUserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SessionController;
@@ -38,6 +39,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/export', [JobsController::class, 'export'])->name('jobs.export');
     Route::post('/import', [JobsController::class,'import'])->name('jobs.import');
+
+    Route::get('pdf/generate-pdf', [PDFController::class, 'generatePDF'])->name('pdf.generatePDF');
 });
 
 
@@ -107,4 +110,6 @@ Route::middleware('auth')->group(function () {
         Route::resource('roles', RoleController::class);
         Route::resource('users', UserController::class);
     });
+
+
 

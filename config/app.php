@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Facade;
 
+
 return [
 
     /*
@@ -183,6 +184,7 @@ return [
         Illuminate\View\ViewServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
 
         /*
          * Package Service Providers...
@@ -215,6 +217,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
     'DataTables' => \Yajra\DataTables\Facades\DataTables::class,
     'Socialite' => Laravel\Socialite\Facades\Socialite::class,
+    'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
         ])->toArray(),
 
 ];

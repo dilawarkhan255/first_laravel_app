@@ -146,11 +146,11 @@ class JobsController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'csv' => 'required|file|mimes:csv,txt',
+            'file' => 'required|mimes:csv,xlsx',
         ]);
-        Excel::import(new JobsImport, $request->file('csv'));
 
-        return redirect()->route('jobs.index')
-                         ->with('success', 'CSV Import added to queue. It will update you once done.');
+        Excel::import(new JobsImport, $request->file('file'));
+
+        return back()->with('success', 'Jobs imported successfully.');
     }
 }

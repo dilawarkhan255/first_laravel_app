@@ -12,35 +12,20 @@
         </div>
     @endif
 
-    <!-- Import/Export Section -->
-    <div class="container mt-4">
-        <div class="d-flex justify-content-center mb-3">
-            <form method="post" action="{{ route('jobs.import') }}" enctype="multipart/form-data">
-                @csrf
-
-                @if ($message = Session::get('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                      <strong>{{ $message }}</strong>
-                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-
-                <div class="form-group">
-                    <strong>CSV File:</strong>
-                    <input type="file" name="csv" class="form-control" />
-                </div>
-                <div class="form-group text-center">
-                    <button type="submit" class="btn btn-success btn-block">Import</button>
-                </div>
-            </form>
-            <form action="{{ route('jobs.export') }}" method="GET">
-                <button type="submit" class="btn btn-primary ml-3">Export Jobs</button>
-            </form>
-        </div>
-    </div>
-
+    <!-- Job Listings Table -->
     <div class="container">
-        <h1 class="mb-4">Job Listings</h1>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="mb-4 flex-grow-1">Job Listings</h1>
+            <div>
+                <a href="{{ route('pdf.generatePDF') }}" class="ml-3 text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="PDF" title="PDF">
+                    <i class="fa-solid fa-file-pdf" style="font-size: 40px;"></i>
+                </a>
+                <i class="fa-solid fa-file-import mr-3"  data-toggle="modal" data-target="#importModal" data-bs-toggle="tooltip" data-bs-placement="Import" title="Import" style="font-size: 40px; color: #2C57B3; cursor: pointer;"></i>
+                <a href="{{ route('jobs.export') }}">
+                    <i class="fa-solid fa-file-excel text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="Excel" title="Excel" style="font-size: 40px;"></i>
+                </a>
+            </div>
+        </div>
         <div class="table-responsive">
             <table id="jobTable" class="table table-bordered table-striped">
                 <thead>
@@ -60,7 +45,34 @@
         </div>
     </div>
 
-    <!-- Bootstrap Modal -->
+    <!-- Import Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="importModalLabel">Import Jobs</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('jobs.import') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-group">
+                            <label for="file">Choose CSV File</label>
+                            <input type="file" name="file" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Import</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Job Description Modal -->
     <div class="modal fade" id="jobModal" tabindex="-1" role="dialog" aria-labelledby="jobModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -132,10 +144,11 @@
                                     '@csrf' +
                                     '@method("PUT")' +
                                     '<button type="submit" data-bs-toggle="tooltip" data-bs-placement="top" title="Enable/Disable" class="btn btn-sm ' + (data ? 'btn-success' : 'btn-danger') + '">' +
-                                    (data ? 'Enable' : 'Disable') + '</button>' +
+                                    (data ? 'Disable' : 'Enable') + '</button>' +
                                 '</form>';
                         }
                     },
+
                     {
                         data: 'action',
                         name: 'action',
@@ -174,5 +187,4 @@
             });
         });
     </script>
-
 </x-layout>
