@@ -3,24 +3,7 @@
 @section('content')
 
 <div class="container">
-
-    <!-- Navbar -->
-    <nav class="navbar navbar-light bg-light fixed-top">
-        <div class="container">
-             <!-- Logo -->
-             <a class="navbar-brand ms-auto" href="#"><img src="{{ asset('vec.png') }}" alt="." style="height: 50px"></a>
-
-            <!-- Search Bar -->
-            <form class="d-flex mx-auto mt-3">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-
-             <!-- Home Link -->
-             <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="/">Home</a>
-        </div>
-    </nav>
-
+    
     <!-- Button Section -->
     <div class="text-left mb-3" style="margin-top: 100px;">
         <a href="{{ route('home') }}"><i class="fas fa-angle-left"> <strong>Back</strong> </a></i>

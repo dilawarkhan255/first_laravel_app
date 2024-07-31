@@ -5,42 +5,7 @@
 @php
     $current = url()->current();
 @endphp
-<nav class="navbar navbar-expand-lg navbar-landing navbar-light fixed-top {{ $current != url('/') ? 'header_back' : '' }}"
-    style="opacity: 0.97;" id="navbar">
 
-
-    <div class="container">
-        <a class="navbar-brand" href="/">
-            <h3 class="card-logo card-logo-light text-white {{ $current != url('/') ? 'header_class' : '' }}">
-                <span id="w_word">J</span>OBSPORTAL
-            </h3>
-            {{-- <img src="{{URL::asset('assets/images/logo-dark.png')}}" class="card-logo card-logo-dark" alt="logo dark" height="17">
-        <img src="{{URL::asset('assets/images/logo-light.png')}}" class="card-logo card-logo-light" alt="logo light" height="17"> --}}
-        </a>
-        <button class="navbar-toggler py-0 fs-20 text-body" type="button" data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-            aria-label="Toggle navigation">
-            <i class="mdi mdi-menu"></i>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mx-auto mt-2 mt-lg-0" id="navbar-example">
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="/" style="color: #2f6293">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('view_job') ? 'active' : '' }}" href="/view_job" style="color: #2f6293;">Jobs</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('login') ? 'active' : '' }}" href="/login" style="color: #2f6293;">Log In</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('register') ? 'active' : '' }}" href="/register" style="color: #2f6293;">Register</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
 <!-- Slider Section -->
 <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
     <ol class="carousel-indicators">
@@ -50,7 +15,7 @@
     </ol>
     <div class="carousel-inner">
       <div class="carousel-item active">
-        <img class="d-block w-100" src="{{ asset('image1.jpg') }}" alt="First slide">
+        <img class="d-block w-100" src="{{ asset('8.jpg') }}" alt="First slide">
       </div>
       <div class="carousel-item">
         <img class="d-block w-100" src="{{ asset('image2.jpg') }}" alt="Second slide">

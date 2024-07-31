@@ -24,7 +24,7 @@ Route::post('/load-more-jobs', [HomeController::class, 'loadmorejobs'])->name('l
 
 //Jobs Routes
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard/home', [DashboardController::class, 'home'])->name('dashboard.home');
+    Route::get('/dashboard', [DashboardController::class, 'home'])->name('dashboard.home');
     Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
     Route::get('/jobs/create', [JobsController::class, 'create'])->name('jobs.create');
     Route::post('/jobs', [JobsController::class, 'store'])->name('jobs.store');
@@ -50,7 +50,6 @@ Route::middleware('auth')->group(function () {
 // Route::get('/login', [SessionController::class, 'create'])->name('login');
 // Route::post('/login', [SessionController::class, 'store'])->name('login');
 Auth::routes(['verify' => true]);
-
 
 //Job Designations Routes
 Route::middleware('auth')->group(function () {

@@ -144,7 +144,7 @@
                                     '@csrf' +
                                     '@method("PUT")' +
                                     '<button type="submit" data-bs-toggle="tooltip" data-bs-placement="top" title="Enable/Disable" class="btn btn-sm ' + (data ? 'btn-success' : 'btn-danger') + '">' +
-                                    (data ? 'Disable' : 'Enable') + '</button>' +
+                                    (data ? 'Enable' : 'Disable') + '</button>' +
                                 '</form>';
                         }
                     },

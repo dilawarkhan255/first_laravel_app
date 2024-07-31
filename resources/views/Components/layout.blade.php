@@ -35,6 +35,7 @@
                         <div class="hidden md:block">
                             <div class="ml-4 flex items-center md:ml-6">
                                 @guest
+                                    <a href="/" class="rounded-md {{ Request::is('/') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" style="text-decoration:none;">Home</a>
                                     <a href="/login" class="rounded-md {{ Request::is('login') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" style="text-decoration:none;">Log In</a>
                                     <a href="/register" class="rounded-md {{ Request::is('register') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" style="text-decoration:none;">Register</a>
                                 @endguest
