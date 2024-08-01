@@ -26,7 +26,7 @@
                 </a>
             </div>
         </div>
-        <div class="table-responsive">
+        <div class="table-responsivee">
             <table id="jobTable" class="table table-bordered table-striped">
                 <thead>
                     <tr>
@@ -119,7 +119,7 @@
     <!-- DataTable Initialization Script -->
     <script>
         $(document).ready(function() {
-            $('#jobTable').DataTable({
+            var table = $('#jobTable').DataTable({
                 responsive: true,
                 processing: true,
                 serverSide: true,
@@ -143,12 +143,11 @@
                             return '<form action="' + row.status_url + '" method="POST" style="display: inline;">' +
                                     '@csrf' +
                                     '@method("PUT")' +
-                                    '<button type="submit" data-bs-toggle="tooltip" data-bs-placement="top" title="Enable/Disable" class="btn btn-sm ' + (data ? 'btn-success' : 'btn-danger') + '">' +
-                                    (data ? 'Enable' : 'Disable') + '</button>' +
+                                    '<button type="submit" data-bs-toggle="tooltip" data-bs-placement="top" title="Toggle Status" class="btn btn-sm ' + (data ? 'btn-success' : 'btn-danger') + '">' +
+                                    (data ? 'Enabled' : 'Disabled') + '</button>' +
                                 '</form>';
                         }
                     },
-
                     {
                         data: 'action',
                         name: 'action',
@@ -165,6 +164,11 @@
                         }
                     }
                 ]
+            });
+
+            $('#jobTable_filter').addClass('form-group mb-3').find('input').addClass('form-control').attr('placeholder', 'Search jobs...');
+            $('#jobTable_filter input').on('keyup', function() {
+                table.search(this.value).draw();
             });
         });
     </script>

@@ -10,7 +10,7 @@ class HomeController extends Controller
 {
     public function home()
     {
-        $jobs = JobListing::where('status', 'enabled')
+        $jobs = JobListing::where('status', '1')
             ->orderBy('created_at', 'desc')
             ->take(6)->get();
         return view('home', compact('jobs'));
@@ -28,7 +28,7 @@ class HomeController extends Controller
         $search = $request->input('search');
         View::share('search_job', $search);
 
-        $query = JobListing::with('designation')->where('status', 'enabled');
+        $query = JobListing::with('designation')->where('status', '1');
 
         if ($search) {
             $query->where(function ($query) use ($search) {
@@ -52,7 +52,7 @@ class HomeController extends Controller
         $start = $request->input('start');
         $search = $request->input('search');
 
-        $query = JobListing::with('designation')->where('status', 'enabled');
+        $query = JobListing::with('designation')->where('status', '1');
 
         if ($search) {
             $query->where(function ($query) use ($search) {

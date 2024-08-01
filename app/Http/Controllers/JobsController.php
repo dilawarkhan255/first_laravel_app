@@ -36,11 +36,26 @@ class JobsController extends Controller
         if ($request->ajax()) {
             $jobs = JobListing::select('*');
 
+            if (!empty($request->get('title'))) {
+                $jobs->where('title', 'like', "%{$request->get('title')}%");
+            }
+            if (!empty($request->get('company'))) {
+                $jobs->where('company', 'like', "%{$request->get('company')}%");
+            }
+            if (!empty($request->get('designation'))) {
+                $jobs->whereHas('designation', function($query) use ($request) {
+                    $query->where('name', 'like', "%{$request->get('designation')}%");
+                });
+            }
+            if (!empty($request->get('location'))) {
+                $jobs->where('location', 'like', "%{$request->get('location')}%");
+            }
+
             return DataTables::of($jobs)
                 ->addIndexColumn()
                 ->addColumn('designation', function($row){
                     $designation = JobDesignation::find($row->designation_id);
-                    return $designation->name;
+                    return $designation ? $designation->name : 'N/A';
                 })
                 ->addColumn('status_url', function($row){
                     return route('jobs.status', ['job' => $row->id]);
@@ -63,6 +78,7 @@ class JobsController extends Controller
 
         return view('jobs.index');
     }
+
 
     public function show(JobListing $job)
     {

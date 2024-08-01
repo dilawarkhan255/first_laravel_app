@@ -47,6 +47,7 @@
                             </div>
                             <div class="card-body">
                                 <p class="small text-muted">Company: {{ $job->company }}</p>
+                                <p class="small text-muted">Designation: {{ $job->designation->name ?? 'N/A' }}</p>
                                 <p class="small text-muted">Location: {{ $job->location }}</p>
                                 <p class="small text-muted">Posted: {{ \Carbon\Carbon::parse($job->created_at)->format('M d, Y') }}</p>
                             </div>

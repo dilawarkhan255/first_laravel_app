@@ -77,6 +77,7 @@
                                     </div>
                                     <div class="card-body">
                                         <p class="small text-muted">Company: ${job.company}</p>
+                                          <p class="small text-muted">Designation: ${job.designation.name}</p>
                                         <p class="small text-muted">Location: ${job.location}</p>
                                         <p class="small text-muted">Posted: ${new Date(job.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
                                     </div>
