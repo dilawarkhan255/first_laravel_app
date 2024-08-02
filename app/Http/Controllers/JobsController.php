@@ -32,52 +32,48 @@ class JobsController extends Controller
     //     return $dataTable->render('index', compact('jobs'));
     // }
     public function index(Request $request)
-    {
-        if ($request->ajax()) {
-            $jobs = JobListing::select('*');
+{
+    if ($request->ajax()) {
+        $jobs = JobListing::query();
+        $search = $request->search['value'];
 
-            if (!empty($request->get('title'))) {
-                $jobs->where('title', 'like', "%{$request->get('title')}%");
-            }
-            if (!empty($request->get('company'))) {
-                $jobs->where('company', 'like', "%{$request->get('company')}%");
-            }
-            if (!empty($request->get('designation'))) {
-                $jobs->whereHas('designation', function($query) use ($request) {
-                    $query->where('name', 'like', "%{$request->get('designation')}%");
-                });
-            }
-            if (!empty($request->get('location'))) {
-                $jobs->where('location', 'like', "%{$request->get('location')}%");
-            }
-
-            return DataTables::of($jobs)
-                ->addIndexColumn()
-                ->addColumn('designation', function($row){
-                    $designation = JobDesignation::find($row->designation_id);
-                    return $designation ? $designation->name : 'N/A';
-                })
-                ->addColumn('status_url', function($row){
-                    return route('jobs.status', ['job' => $row->id]);
-                })
-                ->addColumn('show_url', function($row){
-                    return route('jobs.show', ['job' => $row->id]);
-                })
-                ->addColumn('edit_url', function($row){
-                    return route('jobs.edit', ['job' => $row->id]);
-                })
-                ->addColumn('delete_url', function($row){
-                    return route('jobs.destroy', ['job' => $row->id]);
-                })
-                ->addColumn('action', function($row){
-                    return '';
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+        if ($search) {
+            $jobs = $jobs->leftJoin('job_designations', 'job_designations.id', '=', 'job_listings.designation_id')
+                         ->where(function ($query) use ($search) {
+                             $query->where('job_listings.title', 'LIKE', "%$search%")
+                                   ->orWhere('job_listings.company', 'LIKE', "%$search%")
+                                   ->orWhere('job_listings.location', 'LIKE', "%$search%")
+                                   ->orWhere('job_designations.name', 'LIKE', "%$search%");
+                         });
         }
 
-        return view('jobs.index');
+        return DataTables::of($jobs)
+            ->addIndexColumn()
+            ->addColumn('designation', function($row){
+                $designation = JobDesignation::find($row->designation_id);
+                return $designation ? $designation->name : 'N/A';
+            })
+            ->addColumn('status_url', function($row){
+                return route('jobs.status', ['job' => $row->id]);
+            })
+            ->addColumn('show_url', function($row){
+                return route('jobs.show', ['job' => $row->id]);
+            })
+            ->addColumn('edit_url', function($row){
+                return route('jobs.edit', ['job' => $row->id]);
+            })
+            ->addColumn('delete_url', function($row){
+                return route('jobs.destroy', ['job' => $row->id]);
+            })
+            ->addColumn('action', function($row){
+                return '';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
+
+    return view('jobs.index');
+}
 
 
     public function show(JobListing $job)

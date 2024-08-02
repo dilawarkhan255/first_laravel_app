@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/jobs/{job}', [JobsController::class, 'show'])->name('jobs.show');
     Route::delete('/jobs/{job}', [JobsController::class, 'destroy'])->name('jobs.destroy');
     Route::put('/jobs/{job}/status', [JobsController::class, 'status'])->name('jobs.status');
+    Route::get('/search', [JobsController::class, 'search'])->name('search');
 
     Route::get('/export', [JobsController::class, 'export'])->name('jobs.export');
     Route::post('/import', [JobsController::class,'import'])->name('jobs.import');

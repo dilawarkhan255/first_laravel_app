@@ -1,7 +1,7 @@
 <x-layout>
     <x-slot name="heading">
         <div class="d-flex justify-content-between align-items-center">
-            <h2 class="mb-0">Students</h2>
+            <h2 class="mb-0">Subjects</h2>
             <a href="{{ route('subjects.create') }}" class="btn btn-primary btn-sm mb-3">Create</a>
         </div>
     </x-slot>

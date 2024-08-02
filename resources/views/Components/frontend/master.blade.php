@@ -104,7 +104,7 @@
                 <!-- Search Bar -->
                 <form action="{{ route('view_job') }}" method="GET" class="d-flex mx-auto mt-3">
                     <input class="form-control me-2" type="search" name="search" placeholder="Search Jobs" aria-label="Search" value="{{ isset($search_job) ? $search_job : '' }}" required>
-                    <button class="btn btn-outline-primary" type="submit">Search</button>
+                    <button class="btn btn-outline-dark" type="submit">Search</button>
                 </form>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">

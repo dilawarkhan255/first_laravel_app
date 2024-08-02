@@ -123,7 +123,13 @@
                 responsive: true,
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('jobs.index') }}",
+                ajax: {
+                    url: "{{ route('jobs.index') }}",
+                    data: function(d) {
+                        // Pass the search term to the server
+                        d.searchTerm = $('#jobTable_filter input').val();
+                    }
+                },
                 columns: [
                     { data: 'title', name: 'title' },
                     { data: 'company', name: 'company' },
@@ -163,15 +169,18 @@
                                 '</form>';
                         }
                     }
-                ]
-            });
+                ],
+                initComplete: function () {
 
-            $('#jobTable_filter').addClass('form-group mb-3').find('input').addClass('form-control').attr('placeholder', 'Search jobs...');
-            $('#jobTable_filter input').on('keyup', function() {
-                table.search(this.value).draw();
+                    $('#jobTable_filter').addClass('form-group mb-3').find('input').addClass('form-control').attr('placeholder', 'Search jobs...');
+                    $('#jobTable_filter input').on('keyup', function() {
+                        table.search(this.value).draw();
+                    });
+                }
             });
         });
     </script>
+
 
     <!-- Delete Confirmation Script -->
     <script>
