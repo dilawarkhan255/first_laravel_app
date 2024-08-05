@@ -26,6 +26,79 @@
                 </a>
             </div>
         </div>
+        {{-- <div class="accordion" id="accordionExample">
+            <div class="card">
+              <div class="card-header" id="headingOne">
+                <h2 class="mb-0">
+                  <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Collapsible Group Item #1
+                  </button>
+                </h2>
+              </div>
+              <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div class="card-body">
+                  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header" id="headingTwo">
+                <h2 class="mb-0">
+                  <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Collapsible Group Item #2
+                  </button>
+                </h2>
+              </div>
+              <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                <div class="card-body">
+                  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header" id="headingThree">
+                <h2 class="mb-0">
+                  <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Collapsible Group Item #3
+                  </button>
+                </h2>
+              </div>
+              <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                <div class="card-body">
+                  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                </div>
+              </div>
+            </div>
+        </div> --}}
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <select id="filter-status" class="form-control">
+                            <option value="">--Select Status--</option>
+                            <option value="1">Enable</option>
+                            <option value="0">Disable</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <input type="text" id="filter-company" class="form-control" placeholder="Company">
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <input type="text" id="filter-location" class="form-control" placeholder="Location">
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <input type="text" id="filter-designation" class="form-control" placeholder="Designation">
+                    </div>
+
+                    <div class="form-group col-md-3">
+                        <input type="text" id="filter-title" class="form-control" placeholder="Title">
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="table-responsivee">
             <table id="jobTable" class="table table-bordered table-striped">
                 <thead>
@@ -126,14 +199,18 @@
                 ajax: {
                     url: "{{ route('jobs.index') }}",
                     data: function(d) {
-                        // Pass the search term to the server
                         d.searchTerm = $('#jobTable_filter input').val();
+                        d.title = $('#filter-title').val();
+                        d.company = $('#filter-company').val();
+                        d.designation = $('#filter-designation').val();
+                        d.location = $('#filter-location').val();
+                        d.status = $('#filter-status').val();
                     }
                 },
                 columns: [
                     { data: 'title', name: 'title' },
                     { data: 'company', name: 'company' },
-                    { data: 'designation', name: 'designation' },
+                    { data: 'designation', name: 'designation.name' },
                     {
                         data: 'description',
                         name: 'description',
@@ -171,16 +248,18 @@
                     }
                 ],
                 initComplete: function () {
-
                     $('#jobTable_filter').addClass('form-group mb-3').find('input').addClass('form-control').attr('placeholder', 'Search jobs...');
                     $('#jobTable_filter input').on('keyup', function() {
                         table.search(this.value).draw();
+                    });
+
+                    $('#filter-title, #filter-company, #filter-designation, #filter-location, #filter-status').on('change keyup', function() {
+                        table.draw();
                     });
                 }
             });
         });
     </script>
-
 
     <!-- Delete Confirmation Script -->
     <script>
