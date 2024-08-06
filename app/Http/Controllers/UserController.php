@@ -28,22 +28,20 @@ class UserController extends Controller
 
     public function uploadImage(Request $request)
     {
+        // Validate the request
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+
         ]);
 
-        if ($request->hasFile('image')) {
-            $imageName = time().'.'.$request->image->extension();
-            $request->image->move(public_path('images'), $imageName);
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $attachment = (new AttachmentController())->uploadSingle($file,auth()->user()->id,'User');
 
-            $user = Auth::user();
-            $user->profile_image = $imageName;
-            $user->save();
-
-            return back()->with('success', 'You have successfully uploaded the image.');
+            return back()->with('success', 'Profile image uploaded successfully.');
         }
 
-        return back()->with('error', 'Image upload failed.');
+        return back()->with('error', 'Profile image upload failed.');
     }
 
     public function index(Request $request)

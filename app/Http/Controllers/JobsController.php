@@ -33,70 +33,37 @@ class JobsController extends Controller
     // }
     public function index(Request $request)
     {
+        $companies = JobListing::pluck('company')->unique()->sort()->values();
+        $locations = JobListing::pluck('location')->unique()->sort()->values();
+        $designations = JobDesignation::pluck('name')->unique()->sort()->values();
+        $titles = JobListing::pluck('title')->unique()->sort()->values();
+
         if ($request->ajax()) {
             $query = JobListing::with('designation');
 
-            // // Apply filters if provided
-            // if ($request->has('title') && $request->title != '') {
-            //     $query->where('title', 'like', "%{$request->title}%");
-            // }
+            if ($request->has('title') && $request->title != '') {
+                $query->where('title', $request->title);
+            }
 
-            // if ($request->has('company') && $request->company != '') {
-            //     $query->where('company', 'like', "%{$request->company}%");
-            // }
+            if ($request->has('company') && $request->company != '') {
+                $query->where('company', $request->company);
+            }
 
-            // if ($request->has('designation') && $request->designation != '') {
-            //     $designationIds = JobDesignation::where('name', 'like', "%{$request->designation}%")->pluck('id');
-            //     $query->whereIn('designation_id', $designationIds);
-            // }
+            if ($request->has('designation') && $request->designation != '') {
+                $query->whereHas('designation', function($q) use ($request) {
+                    $q->where('name', $request->designation);
+                });
+            }
 
-            // if ($request->has('location') && $request->location != '') {
-            //     $query->where('location', 'like', "%{$request->location}%");
-            // }
+            if ($request->has('location') && $request->location != '') {
+                $query->where('location', $request->location);
+            }
 
-            // if ($request->has('status') && $request->status != '') {
-            //     $query->where('status', $request->status);
-            // }
+            if ($request->has('status') && $request->status != '') {
+                $query->where('status', $request->status);
+            }
 
             return DataTables::of($query)
-                ->addIndexColumn()
-                ->filter(function ($instance) use ($request) {
-                    // Filtering by title
-                    if ($request->has('title') && $request->title != '') {
-                        $instance->filterColumn('title', function ($query, $keyword) use ($request) {
-                            $query->where('title', 'like', "%{$request->title}%");
-                        });
-                    }
-
-                    // Filtering by company
-                    if ($request->has('company') && $request->company != '') {
-                        $instance->filterColumn('company', function ($query, $keyword) use ($request) {
-                            $query->where('company', 'like', "%{$request->company}%");
-                        });
-                    }
-
-                    // Filtering by designation
-                    if ($request->has('designation') && $request->designation != '') {
-                        $designationIds = JobDesignation::where('name', 'like', "%{$request->designation}%")->pluck('id');
-                        $instance->filterColumn('designation_id', function ($query) use ($designationIds) {
-                            $query->whereIn('designation_id', $designationIds);
-                        });
-                    }
-
-                    // Filtering by location
-                    if ($request->has('location') && $request->location != '') {
-                        $instance->filterColumn('location', function ($query, $keyword) use ($request) {
-                            $query->where('location', 'like', "%{$request->location}%");
-                        });
-                    }
-
-                    // Filtering by status
-                    if ($request->has('status') && $request->status != '') {
-                        $instance->filterColumn('status', function ($query, $keyword) use ($request) {
-                            $query->where('status', $request->status);
-                        });
-                    }
-                })
                 ->addColumn('designation', function($row){
                     return $row->designation ? $row->designation->name : 'N/A';
                 })
@@ -113,14 +80,15 @@ class JobsController extends Controller
                     return route('jobs.destroy', ['job' => $row->id]);
                 })
                 ->addColumn('action', function($row){
-                    return ''; // Add action buttons or links if needed
+                    return '';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
         }
 
-        return view('jobs.index');
+        return view('jobs.index', compact('companies', 'locations', 'designations', 'titles'));
     }
+
 
 
     public function show(JobListing $job)

@@ -43,17 +43,21 @@
                                 @auth
                                 <div class="flex items-center space-x-4">
                                     <div class="relative">
-                                        <img class="h-8 w-8 rounded-full cursor-pointer" src="{{ asset('images/' . (Auth::user()->profile_image ?? 'default-image.png')) }}"alt="{{ Auth::user()->name }}"
-                                            id="dropdownMenuButton"
-                                            onclick="toggleDropdown()">
+                                        <img class="h-8 w-8 rounded-full cursor-pointer"
+                                        src="{{ asset('storage/attachments/user/' . (Auth::user()->profile_image ?? 'default-image.png')) }}"
+                                        alt="{{ Auth::user()->name }}"
+                                        id="dropdownMenuButton"
+                                        onclick="toggleDropdown()">
                                         <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
                                             <div class="p-4 text-center">
                                                 <form action="{{ route('user.upload_image') }}" method="POST" enctype="multipart/form-data">
                                                     @csrf
                                                     <div class="form-group">
-                                                        <label for="image">Upload Image</label>
-                                                        <input type="file" class="form-control" id="image" name="image">
+                                                        <label for="file">Upload File</label>
+                                                        <input type="file" class="form-control" id="file" name="file">
                                                     </div>
+                                                    <input type="hidden" name="attachment_type" value="profile_image">
+                                                    <input type="hidden" name="attachable_id" value="{{ Auth::id() }}">
                                                     <button type="submit" class="btn btn-primary btn-sm">Upload</button>
                                                 </form>
                                             </div>

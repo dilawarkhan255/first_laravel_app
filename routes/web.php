@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\Auth\SocialController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
@@ -99,6 +100,9 @@ Route::middleware('auth')->group(function () {
 
     //Users Profile Image
     Route::post('/upload-image', [UserController::class, 'uploadImage'])->name('user.upload_image');
+
+    // Route::post('upload-single', [AttachmentController::class, 'uploadSingle'])->name('upload.single');
+    // Route::post('/upload-multiple', [AttachmentController::class, 'uploadMultiple'])->name('upload.multiple');
 
     Route::get('login/{provider}', [SocialController::class, 'redirect'])->name('auth.redirect');
     Route::get('login/{provider}/callback', [SocialController::class, 'callBack'])->name('auth.callback');

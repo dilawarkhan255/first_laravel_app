@@ -11,94 +11,97 @@
             {{ Session::get('success') }}
         </div>
     @endif
-
+<style>
+    .collapse{
+        visibility: visible;
+    }
+</style>
     <!-- Job Listings Table -->
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1 class="mb-4 flex-grow-1">Job Listings</h1>
             <div>
-                <a href="{{ route('pdf.generatePDF') }}" class="ml-3 text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="PDF" title="PDF">
+                <a href="{{ route('pdf.generatePDF') }}" class="ml-3 text-decoration-none" data-bs-toggle="tooltip"
+                    data-bs-placement="PDF" title="PDF">
                     <i class="fa-solid fa-file-pdf" style="font-size: 40px;"></i>
                 </a>
-                <i class="fa-solid fa-file-import mr-3"  data-toggle="modal" data-target="#importModal" data-bs-toggle="tooltip" data-bs-placement="Import" title="Import" style="font-size: 40px; color: #2C57B3; cursor: pointer;"></i>
+                <i class="fa-solid fa-file-import mr-3" data-toggle="modal" data-target="#importModal"
+                    data-bs-toggle="tooltip" data-bs-placement="Import" title="Import"
+                    style="font-size: 40px; color: #2C57B3; cursor: pointer;"></i>
                 <a href="{{ route('jobs.export') }}">
-                    <i class="fa-solid fa-file-excel text-decoration-none" data-bs-toggle="tooltip" data-bs-placement="Excel" title="Excel" style="font-size: 40px;"></i>
+                    <i class="fa-solid fa-file-excel text-decoration-none" data-bs-toggle="tooltip"
+                        data-bs-placement="Excel" title="Excel" style="font-size: 40px;"></i>
                 </a>
             </div>
         </div>
-        {{-- <div class="accordion" id="accordionExample">
-            <div class="card">
-              <div class="card-header" id="headingOne">
-                <h2 class="mb-0">
-                  <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Collapsible Group Item #1
-                  </button>
-                </h2>
-              </div>
-              <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+        <div class="d-flex justify-content-end mb-3">
+            <a class="btn btn-sm btn-primary " data-toggle="collapse" href="#collapseExample" role="button"
+                aria-expanded="false" aria-controls="collapseExample">
+                Filters
+            </a>
+        </div>
+        <div class="collapse" id="collapseExample">
+            <div class="card mb-3">
                 <div class="card-body">
-                  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header" id="headingTwo">
-                <h2 class="mb-0">
-                  <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                    Collapsible Group Item #2
-                  </button>
-                </h2>
-              </div>
-              <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-                <div class="card-body">
-                  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header" id="headingThree">
-                <h2 class="mb-0">
-                  <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                    Collapsible Group Item #3
-                  </button>
-                </h2>
-              </div>
-              <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-                <div class="card-body">
-                  Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                </div>
-              </div>
-            </div>
-        </div> --}}
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="form-row">
-                    <div class="form-group col-md-3">
-                        <select id="filter-status" class="form-control">
-                            <option value="">--Select Status--</option>
-                            <option value="1">Enable</option>
-                            <option value="0">Disable</option>
-                        </select>
-                    </div>
+                    <div class="form-row">
+                        <!-- Filter Status -->
+                        <div class="form-group col-md-2">
+                            <label for="filter-status" class="sr-only">Status</label>
+                            <select id="filter-status" class="form-control">
+                                <option value="">--Select Status--</option>
+                                <option value="1">Enable</option>
+                                <option value="0">Disable</option>
+                            </select>
+                        </div>
 
-                    <div class="form-group col-md-3">
-                        <input type="text" id="filter-company" class="form-control" placeholder="Company">
-                    </div>
+                        <!-- Filter Company -->
+                        <div class="form-group col-md-2">
+                            <label for="filter-company" class="sr-only">Company</label>
+                            <select id="filter-company" class="form-control">
+                                <option value="">--Select Company--</option>
+                                @foreach ($companies as $company)
+                                    <option value="{{ $company }}">{{ $company }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                    <div class="form-group col-md-3">
-                        <input type="text" id="filter-location" class="form-control" placeholder="Location">
-                    </div>
+                        <!-- Filter Location -->
+                        <div class="form-group col-md-2">
+                            <label for="filter-location" class="sr-only">Location</label>
+                            <select id="filter-location" class="form-control">
+                                <option value="">--Select Location--</option>
+                                @foreach ($locations as $location)
+                                    <option value="{{ $location }}">{{ $location }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                    <div class="form-group col-md-3">
-                        <input type="text" id="filter-designation" class="form-control" placeholder="Designation">
-                    </div>
+                        <!-- Filter Designation -->
+                        <div class="form-group col-md-2">
+                            <label for="filter-designation" class="sr-only">Designation</label>
+                            <select id="filter-designation" class="form-control">
+                                <option value="">--Select Designation--</option>
+                                @foreach ($designations as $designation)
+                                    <option value="{{ $designation }}">{{ $designation }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                    <div class="form-group col-md-3">
-                        <input type="text" id="filter-title" class="form-control" placeholder="Title">
+                        <!-- Filter Title -->
+                        <div class="form-group col-md-2">
+                            <label for="filter-title" class="sr-only">Title</label>
+                            <select id="filter-title" class="form-control">
+                                <option value="">--Select Title--</option>
+                                @foreach ($titles as $title)
+                                    <option value="{{ $title }}">{{ $title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
         <div class="table-responsivee">
             <table id="jobTable" class="table table-bordered table-striped">
                 <thead>
@@ -119,7 +122,8 @@
     </div>
 
     <!-- Import Modal -->
-    <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -146,7 +150,8 @@
     </div>
 
     <!-- Job Description Modal -->
-    <div class="modal fade" id="jobModal" tabindex="-1" role="dialog" aria-labelledby="jobModalLabel" aria-hidden="true">
+    <div class="modal fade" id="jobModal" tabindex="-1" role="dialog" aria-labelledby="jobModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -166,7 +171,9 @@
     </div>
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- DataTables CSS -->
@@ -199,7 +206,6 @@
                 ajax: {
                     url: "{{ route('jobs.index') }}",
                     data: function(d) {
-                        d.searchTerm = $('#jobTable_filter input').val();
                         d.title = $('#filter-title').val();
                         d.company = $('#filter-company').val();
                         d.designation = $('#filter-designation').val();
@@ -207,27 +213,42 @@
                         d.status = $('#filter-status').val();
                     }
                 },
-                columns: [
-                    { data: 'title', name: 'title' },
-                    { data: 'company', name: 'company' },
-                    { data: 'designation', name: 'designation.name' },
+                columns: [{
+                        data: 'title',
+                        name: 'title'
+                    },
+                    {
+                        data: 'company',
+                        name: 'company'
+                    },
+                    {
+                        data: 'designation',
+                        name: 'designation.name'
+                    },
                     {
                         data: 'description',
                         name: 'description',
                         render: function(data) {
-                            return '<a href="javascript:void(0)" onclick="showDescription(\'' + data.replace(/'/g, "\\'") + '\')" title="View Description"><i class="fa-solid fa-circle-info" style="color: #000000;"></i></a>';
+                            return '<a href="javascript:void(0)" onclick="showDescription(\'' + data
+                                .replace(/'/g, "\\'") +
+                                '\')" title="View Description"><i class="fa-solid fa-circle-info" style="color: #000000;"></i></a>';
                         }
                     },
-                    { data: 'location', name: 'location' },
+                    {
+                        data: 'location',
+                        name: 'location'
+                    },
                     {
                         data: 'status',
                         name: 'status',
                         render: function(data, type, row) {
-                            return '<form action="' + row.status_url + '" method="POST" style="display: inline;">' +
-                                    '@csrf' +
-                                    '@method("PUT")' +
-                                    '<button type="submit" data-bs-toggle="tooltip" data-bs-placement="top" title="Toggle Status" class="btn btn-sm ' + (data ? 'btn-success' : 'btn-danger') + '">' +
-                                    (data ? 'Enabled' : 'Disabled') + '</button>' +
+                            return '<form action="' + row.status_url +
+                                '" method="POST" style="display: inline;">' +
+                                '@csrf' +
+                                '@method('PUT')' +
+                                '<button type="submit" data-bs-toggle="tooltip" data-bs-placement="top" title="Toggle Status" class="btn btn-sm ' +
+                                (data ? 'btn-success' : 'btn-danger') + '">' +
+                                (data ? 'Enabled' : 'Disabled') + '</button>' +
                                 '</form>';
                         }
                     },
@@ -237,46 +258,46 @@
                         orderable: false,
                         searchable: false,
                         render: function(data, type, row) {
-                            return '<a href="' + row.show_url + '" title="View"><i class="fas fa-eye" style="color: #000000;"></i></a> ' +
-                                '<a href="' + row.edit_url + '" title="Edit"><i class="fas fa-edit" style="color: #000000; margin-left:3px;"></i></a> ' +
-                                '<form action="' + row.delete_url + '" method="POST" style="display: inline;">' +
+                            return '<a href="' + row.show_url +
+                                '" title="View"><i class="fas fa-eye" style="color: #000000;"></i></a> ' +
+                                '<a href="' + row.edit_url +
+                                '" title="Edit"><i class="fas fa-edit" style="color: #000000; margin-left:3px;"></i></a> ' +
+                                '<form action="' + row.delete_url +
+                                '" method="POST" style="display: inline;">' +
                                 '@csrf' +
-                                '@method("DELETE")' +
+                                '@method('DELETE')' +
                                 '<i class="fas fa-trash show_confirm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" style="cursor: pointer;"></i>' +
                                 '</form>';
                         }
                     }
                 ],
-                initComplete: function () {
-                    $('#jobTable_filter').addClass('form-group mb-3').find('input').addClass('form-control').attr('placeholder', 'Search jobs...');
-                    $('#jobTable_filter input').on('keyup', function() {
-                        table.search(this.value).draw();
-                    });
-
-                    $('#filter-title, #filter-company, #filter-designation, #filter-location, #filter-status').on('change keyup', function() {
-                        table.draw();
-                    });
+                initComplete: function() {
+                    $('#filter-title, #filter-company, #filter-designation, #filter-location, #filter-status')
+                        .on('change keyup', function() {
+                            table.draw();
+                        });
                 }
             });
         });
     </script>
 
+
     <!-- Delete Confirmation Script -->
     <script>
         $(document).on('click', '.show_confirm', function(event) {
-            var form =  $(this).closest("form");
+            var form = $(this).closest("form");
             event.preventDefault();
             swal({
-                title: "Are you sure you want to delete this record?",
-                icon: "warning",
-                buttons: true,
-                dangerMode: true,
-            })
-            .then((willDelete) => {
-                if (willDelete) {
-                    form.submit();
-                }
-            });
+                    title: "Are you sure you want to delete this record?",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        form.submit();
+                    }
+                });
         });
     </script>
 </x-layout>
