@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\Auth\SocialController;
 use App\Http\Controllers\DashboardController;
@@ -59,6 +60,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/designations/{jobDesignation}/edit', [JobDesignationController::class, 'edit'])->name('designations.edit');
     Route::put('/designations/{jobDesignation}', [JobDesignationController::class, 'update'])->name('designations.update');
     Route::delete('/designations/{jobDesignation}', [JobDesignationController::class, 'destroy'])->name('designations.destroy');
+
+    Route::get('/applicants', [ApplicantController::class, 'index'])->name('applicants.index');
+    Route::post('/job_listings/{job}/apply', [ApplicantController::class, 'store'])->name('applicants.store');
+
 });
 
 //Job Students Routes

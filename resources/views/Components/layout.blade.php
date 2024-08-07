@@ -21,6 +21,7 @@
                                     href="/" style="color: #2f6293;">Home</a> --}}
                                     {{-- <a href="/" class="rounded-md {{ Request::is('/') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" aria-current="page" style="text-decoration:none;">Home</a> --}}
                                     @auth
+                                    <a href="/" class="rounded-md {{ Request::is('/') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" style="text-decoration:none;">Home</a>
                                         <a href="/dashboard" class="rounded-md {{ Request::is('dashboard/home') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" aria-current="page" style="text-decoration:none;">Dashboard</a>
                                         <a href="/jobs" class="rounded-md {{ Request::is('jobs') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" style="text-decoration:none;">Jobs</a>
                                         <a href="/designations" class="rounded-md {{ Request::is('designations') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" style="text-decoration:none;">Job Designations</a>
@@ -44,8 +45,7 @@
                                 <div class="flex items-center space-x-4">
                                     <div class="relative">
                                         <img class="h-8 w-8 rounded-full cursor-pointer"
-                                        src="{{ asset('storage/attachments/user/' . (Auth::user()->profile_image ?? 'default-image.png')) }}"
-                                        alt="{{ Auth::user()->name }}"
+                                        src="{{ asset($user_profile_image ? $user_profile_image->link : 'default.jpg') }}" alt="{{ Auth::user()->name }}"
                                         id="dropdownMenuButton"
                                         onclick="toggleDropdown()">
                                         <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-10">

@@ -115,12 +115,19 @@
                         <li class="nav-item">
                             <a class="nav-link {{ Request::is('view_job') ? 'active' : '' }}" href="/view_job" style="color: #000000;">Jobs</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::is('login') ? 'active' : '' }}" href="/login" style="color: #000000;">Log In</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {{ Request::is('register') ? 'active' : '' }}" href="/register" style="color: #181818;">Register</a>
-                        </li>
+                        @auth
+                            <li class="nav-item">
+                            <a href="/dashboard" class="rounded-md nav-link {{ Request::is('dashboard/home') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white' }} px-3 py-2 text-sm font-medium" aria-current="page" style="text-decoration:none; color: #000000;">Dashboard</a>
+                            </li>
+                        @endauth
+                        @guest
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::is('login') ? 'active' : '' }}" href="/login" style="color: #000000;">Log In</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ Request::is('register') ? 'active' : '' }}" href="/register" style="color: #181818;">Register</a>
+                            </li>
+                        @endguest
                     </ul>
                 </div>
             </div>
@@ -136,6 +143,3 @@
 
     </body>
 </html>
-
-
-
