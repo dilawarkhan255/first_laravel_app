@@ -60,6 +60,9 @@ class RoleSeeder extends Seeder
             'edit-users',
             'delete-users',
             'view-users',
+
+            'applicants',
+            'view-applicants',
         ];
 
         // Assign all permissions to Admin

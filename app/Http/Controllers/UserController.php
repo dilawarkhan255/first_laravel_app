@@ -37,7 +37,6 @@ class UserController extends Controller
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $attachment = (new AttachmentController())->uploadSingle($file,auth()->user()->id,'User','profile');
-            $attachment = (new AttachmentController())->uploadMultiple($file,auth()->user()->id,'User','profile');
             return back()->with('success', 'Profile image uploaded successfully.');
         }
 

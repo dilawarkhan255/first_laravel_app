@@ -20,6 +20,9 @@ class HomeController extends Controller
     public function job_details($slug)
     {
         $job = JobListing::where('slug', $slug)->first();
+        if (!$job) {
+            abort(404, 'Job not found.');
+        }
         return view('job_details', ['job' => $job]);
     }
 

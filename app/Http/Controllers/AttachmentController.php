@@ -8,21 +8,6 @@ use Illuminate\Support\Facades\Storage;
 
 class AttachmentController extends Controller
 {
-    public $image_extensions = [
-        'jpg', 'jpeg', 'jpe', 'jif', 'jfif', 'jfi',
-        'png',
-        'gif',
-        'webp',
-        'tiff', 'tif',
-        'bmp', 'dib',
-        'jp2', 'j2k', 'jpf', 'jpx', 'jpm', 'mj2'
-    ];
-
-    public $video_extensions = ['flv', 'mp4', 'm3u8', 'ts', '3gp', 'mov', 'avi', 'wmv', 'webm', 'mkv', 'ogv', 'ogg', 'oga', 'ogx'];
-
-    public $audio_extensions = [];
-
-    public $document_extensions = ["doc", "docx", "pdf", 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'rtf'];
 
     public function uploadSingle($file, $id, $model, $type)
     {
@@ -53,38 +38,56 @@ class AttachmentController extends Controller
         return back()->with('success', 'File uploaded successfully.');
     }
 
-    public function uploadMultiple($files, $id, $model, $type)
+    public function uploadMultiple($files, $id, $model)
     {
+        // Define file type categories
+        $imageExtensions = ['jpg', 'jpeg', 'png', 'avif', 'gif', 'jfif', 'webp'];
+        $videoExtensions = ['mp4', 'avi'];
+        $audioExtensions = ['mp3', 'wav'];
+        $documentExtensions = ['pdf', 'doc', 'docx'];
 
-        $filePath = $files->store("/attachments/$model/$id", 'public');
-        $link = "/storage/attachments/$model/$id/" . $files->hashName();
+        foreach ($files as $file) {
 
-        $model = "App\\Models\\" . $model;
 
-        $oldAttachment = Attachment::where('attachable_id', $id)
-            ->where('attachment_type', $model)
+            $filePath = $file->store("/attachments/$model/$id", 'public');
+            $link = "/storage/attachments/$model/$id/" . $file->hashName();
+
+            $modelClass = "App\\Models\\" . $model;
+
+            $type = 'other';
+            $extension = $file->extension();
+            if (in_array($extension, $imageExtensions)) {
+                $type = 'image';
+            } elseif (in_array($extension, $videoExtensions)) {
+                $type = 'video';
+            } elseif (in_array($extension, $audioExtensions)) {
+                $type = 'audio';
+            } elseif (in_array($extension, $documentExtensions)) {
+                $type = 'document';
+            }
+
+            $oldAttachment = Attachment::where('attachable_id', $id)
+            ->where('attachment_type', $modelClass)
             ->where('type', $type)
             ->first();
 
-        if ($oldAttachment) {
-            Storage::disk('public')->delete(str_replace('/storage/', '', $oldAttachment->link));
-            $oldAttachment->delete();
-        }
+            if ($oldAttachment) {
+                Storage::disk('public')->delete(str_replace('/storage/', '', $oldAttachment->link));
+                $oldAttachment->delete();
+            }
 
-        foreach ($files as $key => $file) {
-                $filePath = $file->store("/attachments/$model/$id", 'public');
-                $link = "/storage/attachments/$model/$id/" . $file->hashName();
-                $model = "App\\Models\\".$model;
-                Attachment::create([
-                'attachment_type' => $model,
+            Attachment::create([
+                'attachment_type' => $modelClass,
                 'attachable_id' => $id,
                 'name' => $file->getClientOriginalName(),
                 'link' => $link,
                 'type' => $type,
-                'extension' => $file->extension(),
+                'extension' => $extension,
                 'size' => $file->getSize(),
             ]);
         }
-        return redirect()->back()->with('message','File uploaded.');
+
+        return redirect()->back()->with('message', 'Files uploaded.');
     }
+
 }

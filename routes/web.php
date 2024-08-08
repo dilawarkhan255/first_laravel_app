@@ -37,22 +37,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/jobs/{job}/status', [JobsController::class, 'status'])->name('jobs.status');
     Route::get('/search', [JobsController::class, 'search'])->name('search');
 
+    //import export & Pdf Routes
     Route::get('/export', [JobsController::class, 'export'])->name('jobs.export');
     Route::post('/import', [JobsController::class,'import'])->name('jobs.import');
-
     Route::get('pdf/generate-pdf', [PDFController::class, 'generatePDF'])->name('pdf.generatePDF');
-});
 
-
-// Auth Routes
-// Route::get('/register', [RegisterUserController::class, 'create'])->name('register');
-// Route::post('/register', [RegisterUserController::class, 'store'])->name('register');
-// Route::get('/login', [SessionController::class, 'create'])->name('login');
-// Route::post('/login', [SessionController::class, 'store'])->name('login');
-Auth::routes(['verify' => true]);
-
-//Job Designations Routes
-Route::middleware('auth')->group(function () {
+    //Job Designations Routes
     Route::get('/designations', [JobDesignationController::class, 'index'])->name('designations.index');
     Route::get('/designations/create', [JobDesignationController::class, 'create'])->name('designations.create');
     Route::post('/designations', [JobDesignationController::class, 'store'])->name('designations.store');
@@ -61,13 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/designations/{jobDesignation}', [JobDesignationController::class, 'update'])->name('designations.update');
     Route::delete('/designations/{jobDesignation}', [JobDesignationController::class, 'destroy'])->name('designations.destroy');
 
-    Route::get('/applicants', [ApplicantController::class, 'index'])->name('applicants.index');
-    Route::post('/job_listings/{job}/apply', [ApplicantController::class, 'store'])->name('applicants.store');
-
-});
-
-//Job Students Routes
-Route::middleware('auth')->group(function () {
+    //Job Students Routes
     Route::get('/students', [StudentController::class, 'index'])->name('students.index');
     Route::get('/students/create', [StudentController::class, 'create'])->name('students.create');
     Route::post('/students', [StudentController::class, 'store'])->name('students.store');
@@ -75,10 +59,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/students/{student}/edit', [StudentController::class, 'edit'])->name('students.edit');
     Route::put('/students/{student}', [StudentController::class, 'update'])->name('students.update');
     Route::delete('/students/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
-});
 
-//Job Subjects Routes
-Route::middleware('auth')->group(function () {
+    //Job Subjects Routes
     Route::get('/subjects', [SubjectController::class, 'index'])->name('subjects.index');
     Route::get('/subjects/create', [SubjectController::class, 'create'])->name('subjects.create');
     Route::post('/subjects', [SubjectController::class, 'store'])->name('subjects.store');
@@ -101,21 +83,34 @@ Route::middleware('auth')->group(function () {
     //Bulk Delete Subjects
     Route::post('subjects/bulk-delete', [SubjectController::class, 'bulkDelete'])->name('subjects.bulkDelete');
 
+    //Roles and Permissions
+    Route::resource('roles', RoleController::class);
+    Route::resource('users', UserController::class);
+
+    //applicants routes
+    Route::get('/applicants', [ApplicantController::class, 'index'])->name('applicants.index');
+    Route::post('/job_listings/{job}/apply', [ApplicantController::class, 'store'])->name('applicants.store');
+
+    //Attachments Routes
+    Route::post('/upload-image', [UserController::class, 'uploadImage'])->name('user.upload_image');
 });
 
-    //Users Profile Image
-    Route::post('/upload-image', [UserController::class, 'uploadImage'])->name('user.upload_image');
-
-    // Route::post('upload-single', [AttachmentController::class, 'uploadSingle'])->name('upload.single');
-    // Route::post('/upload-multiple', [AttachmentController::class, 'uploadMultiple'])->name('upload.multiple');
-
+    //Social Routes
     Route::get('login/{provider}', [SocialController::class, 'redirect'])->name('auth.redirect');
     Route::get('login/{provider}/callback', [SocialController::class, 'callBack'])->name('auth.callback');
 
-    Route::middleware('auth')->group(function () {
-        Route::resource('roles', RoleController::class);
-        Route::resource('users', UserController::class);
-    });
+    Auth::routes(['verify' => true]);
+
+// Auth Routes
+// Route::get('/register', [RegisterUserController::class, 'create'])->name('register');
+// Route::post('/register', [RegisterUserController::class, 'store'])->name('register');
+// Route::get('/login', [SessionController::class, 'create'])->name('login');
+// Route::post('/login', [SessionController::class, 'store'])->name('login');
+//Users Profile Image
+// Route::post('upload-single', [AttachmentController::class, 'uploadSingle'])->name('upload.single');
+// Route::post('/upload-multiple', [AttachmentController::class, 'uploadMultiple'])->name('upload.multiple');
+
+
 
 
 

@@ -8,40 +8,49 @@ use App\Models\JobListing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Yajra\DataTables\Facades\DataTables;
 
 class ApplicantController extends Controller
 {
     public function index()
-    {
-        $applicants = Applicant::with(['user', 'job'])->get();
-        return view('applicants.index', compact('applicants'));
+{
+    if (request()->ajax()) {
+        $applicants = Applicant::with(['user', 'job']);
+
+        return DataTables::of($applicants)
+            ->addColumn('action', function($applicant) {
+                $attachmentUrl = Storage::url($applicant->attachment);
+                return '<a href="' . $attachmentUrl . '" target="_blank">View Resume</a>';
+            })
+            ->editColumn('created_at', function($applicant) {
+                return $applicant->created_at->format('Y-m-d H:i:s');
+            })
+            ->make(true);
     }
+
+    return view('applicants.index');
+}
 
     public function store(Request $request, JobListing $job)
     {
         $request->validate([
-            'resume' => 'required|mimes:pdf,doc,docx|max:2048',
-            'cover_letter' => 'nullable|string',
+            'file.*' => 'nullable|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
         ]);
 
-        $existingApplication = Applicant::where('user_id', Auth::id())
-        ->where('job_id', $job->id)
-        ->first();
-
-        if ($existingApplication) {
-            return redirect()->back()->with('error', 'You have already applied for this job.');
+        if ($request->hasFile('file')) {
+            $files = $request->file('file');
+            (new AttachmentController())->uploadMultiple($files, auth()->user()->id, 'User');
         }
 
-        $resumePath = $request->file('resume')->store('resumes', 'public');
-
-        Applicant::create([
+        $applicant = Applicant::create([
             'user_id' => Auth::id(),
             'job_id' => $job->id,
-            'resume' => $resumePath,
             'cover_letter' => $request->cover_letter,
         ]);
 
         return redirect()->back()->with('success', 'Application submitted successfully.');
     }
+
+
 
 }
