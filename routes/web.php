@@ -4,6 +4,7 @@ use App\Http\Controllers\ApplicantController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\Auth\SocialController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FavouriteController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JobDesignationController;
 use Illuminate\Support\Facades\Route;
@@ -90,14 +91,19 @@ Route::middleware('auth')->group(function () {
     //applicants routes
     Route::get('/applicants', [ApplicantController::class, 'index'])->name('applicants.index');
     Route::post('/job_listings/{job}/apply', [ApplicantController::class, 'store'])->name('applicants.store');
+    // Route::delete('/applicants/{applicant}', [ApplicantController::class, 'destroy'])->name('applicants.destroy');
 
     //Attachments Routes
     Route::post('/upload-image', [UserController::class, 'uploadImage'])->name('user.upload_image');
+
+    Route::post('/toggle-favourite', [FavouriteController::class, 'toggleFavourite'])->name('toggle.favourite')->middleware('auth');
+
 });
 
     //Social Routes
     Route::get('login/{provider}', [SocialController::class, 'redirect'])->name('auth.redirect');
     Route::get('login/{provider}/callback', [SocialController::class, 'callBack'])->name('auth.callback');
+
 
     Auth::routes(['verify' => true]);
 

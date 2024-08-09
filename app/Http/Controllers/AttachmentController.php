@@ -76,6 +76,7 @@ class AttachmentController extends Controller
                 $oldAttachment->delete();
             }
 
+            $path = $file->store('attachments');
             Attachment::create([
                 'attachment_type' => $modelClass,
                 'attachable_id' => $id,

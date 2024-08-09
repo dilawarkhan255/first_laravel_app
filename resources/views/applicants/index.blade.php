@@ -10,23 +10,21 @@
         </div>
     @endif
 
-    <div class="container mt-5">
-        <h2 class="mb-4">Applicants</h2>
-        <table class="table table-bordered" id="applicantsTable">
+    <div class="container">
+        <h1>Applicants</h1>
+        <table id="applicants-table" class="display">
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Applicant Name</th>
+                    <th>Name</th>
                     <th>Email</th>
-                    <th>Job Title</th>
-                    <th>Applied At</th>
-                    <th>Resume</th>
+                    <th>Job Titles</th> <!-- Add this column for job titles -->
+                    <th>Created At</th>
+                    <th>Action</th>
                 </tr>
             </thead>
-            <tbody></tbody>
         </table>
     </div>
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Bootstrap CSS -->
@@ -42,17 +40,17 @@
     <!-- SweetAlert JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
 
-    <script type="text/javascript">
+    <script>
         $(document).ready(function() {
-            $('#applicantsTable').DataTable({
+            $('#applicants-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('applicants.index') }}',
+                ajax: '{!! route('applicants.index') !!}',
                 columns: [
                     { data: 'id', name: 'id' },
-                    { data: 'user.name', name: 'user.name' },
-                    { data: 'user.email', name: 'user.email' },
-                    { data: 'job.title', name: 'job.title' },
+                    { data: 'user_name', name: 'user_name' },
+                    { data: 'user_email', name: 'user_email' },
+                    { data: 'joblisting_title', name: 'joblisting_title' },
                     { data: 'created_at', name: 'created_at' },
                     { data: 'action', name: 'action', orderable: false, searchable: false }
                 ]

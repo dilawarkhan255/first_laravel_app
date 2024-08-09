@@ -18,4 +18,13 @@ class JobListing extends Model
         return $this->belongsTo(JobDesignation::class, 'designation_id');
     }
 
+    public function applicants()
+    {
+        return $this->belongsToMany(Applicant::class, 'applicant_joblisting');
+    }
+
+    public function favourites()
+    {
+        return $this->belongsToMany(Favourite::class);
+    }
 }
