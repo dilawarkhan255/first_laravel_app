@@ -20,10 +20,19 @@ use App\Models\Subject;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 
-Route::get('/', [HomeController::class, 'home'])->name('home');
-Route::get('/job/{slug}', [HomeController::class, 'job_details'])->name('job_details');
-Route::get('/view_job', [HomeController::class, 'view_job'])->name('view_job');
-Route::post('/load-more-jobs', [HomeController::class, 'loadmorejobs'])->name('loadmorejobs');
+
+    //Social Routes
+    Route::get('login/{provider}', [SocialController::class, 'redirect'])->name('auth.redirect');
+    Route::get('login/{provider}/callback', [SocialController::class, 'callBack'])->name('auth.callback');
+
+    //Login\Resgistration Route
+    Auth::routes(['verify' => true]);
+
+    //Home Routes
+    Route::get('/', [HomeController::class, 'home'])->name('home');
+    Route::get('/home/job/{slug}', [HomeController::class, 'job_details'])->name('job_details');
+    Route::get('/home/view_job', [HomeController::class, 'view_job'])->name('view_job');
+    Route::post('/load-more-jobs', [HomeController::class, 'loadmorejobs'])->name('loadmorejobs');
 
 //Jobs Routes
 Route::middleware('auth')->group(function () {
@@ -93,19 +102,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/job_listings/{job}/apply', [ApplicantController::class, 'store'])->name('applicants.store');
     // Route::delete('/applicants/{applicant}', [ApplicantController::class, 'destroy'])->name('applicants.destroy');
 
-    //Attachments Routes
+    //Attachments Route
     Route::post('/upload-image', [UserController::class, 'uploadImage'])->name('user.upload_image');
 
-    Route::post('/toggle-favourite', [FavouriteController::class, 'toggleFavourite'])->name('toggle.favourite')->middleware('auth');
+    //Favourite Route
+    Route::post('/favourite', [FavouriteController::class, 'toggleFavourite'])->name('favourite.toggle');
 
 });
 
-    //Social Routes
-    Route::get('login/{provider}', [SocialController::class, 'redirect'])->name('auth.redirect');
-    Route::get('login/{provider}/callback', [SocialController::class, 'callBack'])->name('auth.callback');
-
-
-    Auth::routes(['verify' => true]);
 
 // Auth Routes
 // Route::get('/register', [RegisterUserController::class, 'create'])->name('register');

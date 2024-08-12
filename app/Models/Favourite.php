@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,15 +8,16 @@ class Favourite extends Model
 {
     use HasFactory;
 
+    protected $table = 'favourite_joblisting';
     protected $guarded = [];
 
-    public function jobs()
+    public function user()
     {
-        return $this->belongsToMany(JobListing::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function users()
+    public function jobListing()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsTo(JobListing::class, 'job_listing_id');
     }
 }

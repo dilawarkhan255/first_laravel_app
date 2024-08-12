@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\JobListing;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 
 class HomeController extends Controller
@@ -13,17 +14,31 @@ class HomeController extends Controller
         $jobs = JobListing::where('status', '1')
             ->orderBy('created_at', 'desc')
             ->take(6)->get();
-        return view('home', compact('jobs'));
+        return view('home/home', compact('jobs'));
     }
 
 
     public function job_details($slug)
     {
         $job = JobListing::where('slug', $slug)->first();
+
         if (!$job) {
             abort(404, 'Job not found.');
         }
-        return view('job_details', ['job' => $job]);
+
+        $favouriteJobs = collect();
+
+        if (Auth::check()) {
+            $user = Auth::user();
+            $favouriteJobs = $user->favouriteJobs()
+                ->wherePivot('favourite', true)
+                ->pluck('job_listings.id');
+        }
+
+        return view('home.job_details', [
+            'job' => $job,
+            'favouriteJobs' => $favouriteJobs
+        ]);
     }
 
     public function view_job(Request $request)
@@ -47,7 +62,7 @@ class HomeController extends Controller
         $jobs = $query->orderBy('created_at', 'desc')->take(3)->get();
         $totalJobs = $query->count();
 
-        return view('view_job', compact('jobs', 'totalJobs'));
+        return view('home/view_job', compact('jobs', 'totalJobs'));
     }
 
     public function loadmorejobs(Request $request)

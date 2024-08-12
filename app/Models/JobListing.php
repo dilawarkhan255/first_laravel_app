@@ -23,8 +23,11 @@ class JobListing extends Model
         return $this->belongsToMany(Applicant::class, 'applicant_joblisting');
     }
 
-    public function favourites()
+    public function favouritedByUsers()
     {
-        return $this->belongsToMany(Favourite::class);
+        return $this->belongsToMany(User::class, 'favourite_joblisting')
+                    ->withPivot('favourite')
+                    ->withTimestamps();
     }
+
 }

@@ -43,7 +43,13 @@
                         @else
                             <a href="{{ route('login') }}" class="btn btn-dark">Apply</a>
                         @endauth
-                        <span class="mx-2"><i class="far fa-heart"></i></span>
+                        <span class="favourite-icon mx-2" data-id="{{ $job->id }}" style="cursor: pointer;">
+                            @if($favouriteJobs->contains($job->id))
+                                <i class="fas fa-heart text-danger"></i>
+                            @else
+                                <i class="far fa-heart"></i>
+                            @endif
+                        </span>
                         <span><i class="fas fa-share-alt-square"></i></span>
                     </div>
                 </div>
@@ -108,8 +114,5 @@
             </div>
         </div>
     </div>
-
-
 </div>
-
 @endsection

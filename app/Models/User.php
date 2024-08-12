@@ -49,8 +49,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Applicant::class);
     }
 
-    public function favourites()
+    public function favouriteJobs()
     {
-        return $this->belongsToMany(Favourite::class);
+        return $this->belongsToMany(JobListing::class, 'favourite_joblisting')
+                    ->withPivot('favourite')
+                    ->wherePivot('favourite', false)
+                    ->withTimestamps();
     }
+
 }
