@@ -41,6 +41,7 @@ class HomeController extends Controller
         ]);
     }
 
+
     public function view_job(Request $request)
     {
         $search = $request->input('search');

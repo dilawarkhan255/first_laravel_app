@@ -2,6 +2,7 @@
     <head>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" rel="stylesheet">
 
         <style>
             .carousel-item img {
@@ -113,7 +114,7 @@
                             <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="/" style="color: #000000">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ Request::is('view_job') ? 'active' : '' }}" href="/view_job" style="color: #000000;">Jobs</a>
+                            <a class="nav-link {{ Request::is('view_job') ? 'active' : '' }}" href="/home/view_job" style="color: #000000;">Jobs</a>
                         </li>
                         @auth
                             <li class="nav-item">
@@ -141,38 +142,77 @@
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
+        <!-- Add Favourite Jobs Script -->
         <script>
-            $(document).on('click', '.favourite-icon', function(e) {
-                e.preventDefault();
+            $(document).ready(function() {
+                let favouriteJobs = JSON.parse(localStorage.getItem('favouriteJobs')) || [];
 
-                let iconSpan = $(this);
-                let jobId = iconSpan.data('id');
-
-                $.ajax({
-                    url: '{{ route("favourite.toggle") }}',
-                    method: 'POST',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        job_id: jobId
-                    },
-                    success: function(response) {
-                        let heartIcon = iconSpan.find('i');
-
-                        if (response.status === 'added') {
-                            heartIcon.removeClass('far fa-heart').addClass('fas fa-heart text-danger');
-                        } else if (response.status === 'removed') {
-                            heartIcon.removeClass('fas fa-heart text-danger').addClass('far fa-heart');
+                function updateUI() {
+                    $('.favourite-icon').each(function() {
+                        let jobId = $(this).data('id');
+                        let heartIcon = $(this).find('i');
+                        if (favouriteJobs.includes(jobId)) {
+                            heartIcon.removeClass('far fa-heart').addClass('fas fa-heart text-success');
+                        } else {
+                            heartIcon.removeClass('fas fa-heart text-success').addClass('far fa-heart');
                         }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX Error: ', status, error);
-                        alert('An error occurred while processing your request.');
-                    }
+                    });
+                }
+
+                updateUI();
+
+                $(document).on('click', '.favourite-icon', function(e) {
+                    e.preventDefault();
+
+                    let iconSpan = $(this);
+                    let jobId = iconSpan.data('id');
+                    let heartIcon = iconSpan.find('i');
+                    let isFavourited = heartIcon.hasClass('fas fa-heart text-success');
+                    let toastMessage = '';
+                    let toastType = '';
+
+                    iconSpan.prop('disabled', true);
+
+                    $.ajax({
+                        url: '{{ route("favourite.toggle") }}',
+                        method: 'POST',
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            job_id: jobId
+                        },
+                        success: function(response) {
+                            if (response.status === 'added') {
+                                heartIcon.removeClass('far fa-heart').addClass('fas fa-heart text-success');
+                                toastMessage = 'Job added to favourites.';
+                                toastType = 'success';
+                                favouriteJobs.push(jobId);
+                            } else if (response.status === 'removed') {
+                                heartIcon.removeClass('fas fa-heart text-success').addClass('far fa-heart');
+                                toastMessage = 'Job removed from favourites.';
+                                toastType = 'error';
+                                favouriteJobs = favouriteJobs.filter(id => id !== jobId);
+                            }
+
+                            localStorage.setItem('favouriteJobs', JSON.stringify(favouriteJobs));
+
+                            if (toastMessage) {
+                                toastr[toastType](toastMessage);
+                            }
+
+                            updateUI();
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX Error: ', status, error);
+                            toastr.error('An error occurred while processing your request.');
+                        },
+                        complete: function() {
+                            iconSpan.prop('disabled', false);
+                        }
+                    });
                 });
             });
         </script>
-
-
     </body>
 </html>

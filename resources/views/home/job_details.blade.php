@@ -45,11 +45,13 @@
                         @endauth
                         <span class="favourite-icon mx-2" data-id="{{ $job->id }}" style="cursor: pointer;">
                             @if($favouriteJobs->contains($job->id))
-                                <i class="fas fa-heart text-danger"></i>
+                                <i class="fas fa-heart text-success"></i>
                             @else
                                 <i class="far fa-heart"></i>
                             @endif
                         </span>
+                        <!-- Toast container -->
+                        <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
                         <span><i class="fas fa-share-alt-square"></i></span>
                     </div>
                 </div>
@@ -83,7 +85,9 @@
                 </div>
             </div>
         </div>
+
     </div>
+
 
     <!-- Apply Modal -->
     <div class="modal fade" id="applyModal" tabindex="-1" aria-labelledby="applyModalLabel" aria-hidden="true">
@@ -103,7 +107,7 @@
                             <input type="file" class="form-control" id="file" name="file[]" required>
                         </div>
                         <div class="form-group">
-                            <label for="file">Other Documents</label>
+                            <label for="file">Other Documents: <strong>(Optional)</strong></label>
                             <input type="file" class="form-control" id="file" name="file[]">
                             <input type="hidden" name="attachment_type" value="profile_image">
                             <input type="hidden" name="attachable_id" value="{{ Auth::id() }}">

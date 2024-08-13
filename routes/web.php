@@ -10,6 +10,7 @@ use App\Http\Controllers\JobDesignationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobsController;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegisterUserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SessionController;
@@ -34,8 +35,14 @@ use Laravel\Socialite\Facades\Socialite;
     Route::get('/home/view_job', [HomeController::class, 'view_job'])->name('view_job');
     Route::post('/load-more-jobs', [HomeController::class, 'loadmorejobs'])->name('loadmorejobs');
 
-//Jobs Routes
+
 Route::middleware('auth')->group(function () {
+
+    //Profile Routes
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    //Jobs Routes
     Route::get('/dashboard', [DashboardController::class, 'home'])->name('dashboard.home');
     Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
     Route::get('/jobs/create', [JobsController::class, 'create'])->name('jobs.create');

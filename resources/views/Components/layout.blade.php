@@ -45,32 +45,33 @@
                                 @auth
                                 <div class="flex items-center space-x-4">
                                     <div class="relative">
+                                        <!-- Profile Image -->
                                         <img class="h-8 w-8 rounded-full cursor-pointer"
-                                        src="{{ asset($user_profile_image ? $user_profile_image->link : 'default.jpg') }}" alt="{{ Auth::user()->name }}"
-                                        id="dropdownMenuButton"
-                                        onclick="toggleDropdown()">
+                                             src="{{ Auth::user()->profile_image ? asset('storage/' . Auth::user()->profile_image) : asset('default.jpg') }}"
+                                             alt="{{ Auth::user()->name }}"
+                                             id="dropdownMenuButton"
+                                             onclick="toggleDropdown()">
+
+                                        <!-- Dropdown Menu -->
                                         <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-lg shadow-lg z-10">
-                                            <div class="p-4 text-center">
-                                                <form action="{{ route('user.upload_image') }}" method="POST" enctype="multipart/form-data">
-                                                    @csrf
-                                                    <div class="form-group">
-                                                        <label for="file">Upload File</label>
-                                                        <input type="file" class="form-control" id="file" name="file">
-                                                    </div>
-                                                    <input type="hidden" name="attachment_type" value="profile_image">
-                                                    <input type="hidden" name="attachable_id" value="{{ Auth::id() }}">
-                                                    <button type="submit" class="btn btn-primary btn-sm">Upload</button>
-                                                </form>
+                                            <div class="py-2">
+                                                <!-- Profile Link -->
+                                                <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                                    <i class="fas fa-user mr-2"></i> Profile
+                                                </a>
+                                                <!-- Logout Form -->
+                                                <div class="border-t border-gray-200">
+                                                    <form method="POST" action="{{ route('logout') }}">
+                                                        @csrf
+                                                        <button type="submit" class="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
+                                                            <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <span class="text-white text-sm font-medium">{{ Auth::user()->name }}</span>
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-4 rounded">
-                                            Logout
-                                        </button>
-                                    </form>
                                 </div>
                                 @endauth
                             </div>
