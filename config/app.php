@@ -218,6 +218,7 @@ return [
     'DataTables' => \Yajra\DataTables\Facades\DataTables::class,
     'Socialite' => Laravel\Socialite\Facades\Socialite::class,
     'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
+    'Redis' => Illuminate\Support\Facades\Redis::class,
         ])->toArray(),
 
 ];

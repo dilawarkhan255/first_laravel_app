@@ -10,6 +10,7 @@ use App\Models\JobDesignation;
 use Illuminate\Http\Request;
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Redis;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
@@ -91,8 +92,19 @@ class JobsController extends Controller
 
 
 
-    public function show(JobListing $job)
+    public function show($id)
     {
+
+        $jobData = Redis::get('job_listing:' . $id);
+
+        if ($jobData) {
+            $job = json_decode($jobData, true);
+        } else {
+            $job = JobListing::findOrFail($id);
+
+            Redis::set('job_listing:' . $id, json_encode($job->toArray()));
+        }
+
         return view('jobs.show', ['job' => $job]);
     }
 
@@ -118,6 +130,8 @@ class JobsController extends Controller
 
         $job->slug = Str::slug($request->title . '_' . $job->id);
         $job->save();
+
+        Redis::set('job_listing:' . $job->id, json_encode($job->toArray()));
 
         return redirect()->route('jobs.index')->with('success', 'Job created successfully.');
     }
