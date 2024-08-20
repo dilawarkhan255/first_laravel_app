@@ -44,7 +44,7 @@
 
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+                                <input type="password" id="password" name="password" class="form-control" placeholder="Enter password">
                                 @error('password')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror

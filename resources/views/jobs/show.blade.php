@@ -1,7 +1,7 @@
 <x-layout>
     <x-slot name="heading">
         <div class="d-flex justify-content-between align-items-center">
-            <h2 class="mb-0">{{ $job->title }}</h2>
+            <h2 class="mb-0">{{ $job['title'] }}</h2>
         </div>
     </x-slot>
 
@@ -13,26 +13,26 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <h1>{{ $job->title }}</h1>
+                        <h1>{{ $job['title'] }}</h1>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered">
                             <tbody>
                                 <tr>
                                     <th scope="row">Company</th>
-                                    <td>{{ $job->company }}</td>
+                                    <td>{{ $job['company'] }}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Designation</th>
-                                    <td>{{ $job->designation->name  }}</td>
+                                    <td>{{ $job['designation']['name'] ?? 'N/A' }}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Description</th>
-                                    <td>{!! $job->description !!}</td>
+                                    <td>{!! $job['description'] !!}</td>
                                 </tr>
                                 <tr>
                                     <th scope="row">Location</th>
-                                    <td>{{ $job->location }}</td>
+                                    <td>{{ $job['location'] }}</td>
                                 </tr>
                             </tbody>
                         </table>

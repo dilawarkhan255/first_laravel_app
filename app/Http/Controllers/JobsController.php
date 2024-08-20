@@ -23,7 +23,7 @@ class JobsController extends Controller
         $this->middleware(['permission:jobs|create-jobs|edit-jobs|delete-jobs'], ['only' => ['index', 'show']]);
         $this->middleware(['permission:create-jobs'], ['only' => ['create', 'store']]);
         $this->middleware(['permission:edit-jobs'], ['only' => ['edit', 'update']]);
-        $this->middleware(['permission:show-jobs'], ['only' => ['show']]);
+        $this->middleware(['permission:view-jobs'], ['only' => ['show']]);
         $this->middleware(['permission:delete-jobs'], ['only' => ['destroy']]);
     }
 
@@ -91,22 +91,22 @@ class JobsController extends Controller
     }
 
 
-
     public function show($id)
     {
+        $job = Redis::get('job_listing_' . $id);
 
-        $jobData = Redis::get('job_listing:' . $id);
-
-        if ($jobData) {
-            $job = json_decode($jobData, true);
+        if (empty($job)) {
+            $job = JobListing::with('designation')->findOrFail($id);
+            Redis::set('job_listing_' . $id, json_encode($job->toArray()));
         } else {
-            $job = JobListing::findOrFail($id);
-
-            Redis::set('job_listing:' . $id, json_encode($job->toArray()));
+            $job = json_decode($job, true);
         }
 
         return view('jobs.show', ['job' => $job]);
     }
+
+
+
 
     public function create(JobListing $job)
     {
@@ -131,10 +131,15 @@ class JobsController extends Controller
         $job->slug = Str::slug($request->title . '_' . $job->id);
         $job->save();
 
-        Redis::set('job_listing:' . $job->id, json_encode($job->toArray()));
+        Redis::set('job_listing_' . $job->id, json_encode($job->toArray()), 'EX', 30);
+
+        // // Optionally log the job data
+        // $jobData = Redis::get('job_listing_' . $job->id);
+        // logger($jobData);
 
         return redirect()->route('jobs.index')->with('success', 'Job created successfully.');
     }
+
 
     public function edit(JobListing $job)
     {
