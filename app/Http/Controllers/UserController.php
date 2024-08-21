@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission;
 use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
@@ -85,28 +86,53 @@ class UserController extends Controller
      */
     public function create(): View
     {
-        return view('users.create', [
-            'roles' => Role::all()
-        ]);
+        $permissions = Permission::all();
+        $roles = Role::all();
+
+        return view('users.create', compact('permissions', 'roles'));
     }
+
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreUserRequest $request): RedirectResponse
     {
+        // Validate the request
+        $this->validate($request, [
+            'name' => 'required|unique:roles,name',
+            'permission' => 'required|array',
+        ]);
+
+        // Create a new role
+        $role = Role::create(['name' => $request->input('name')]);
+
+        // Determine which permissions to assign to the role
+        if (in_array('all', $request->input('permission'))) {
+            $permissions = Permission::all();
+        } else {
+            $permissions = Permission::whereIn('id', $request->input('permission'))->get();
+        }
+
+        // Sync the role's permissions
+        $role->syncPermissions($permissions);
+
+        // Create a new user
         $input = $request->all();
         $input['password'] = Hash::make($request->password);
-
         $user = User::create($input);
-        $role = DB::table('roles')->find($request->role_id);
-        if($role){
+
+        // Assign the role to the user, if applicable
+        $role = Role::find($request->role_id);
+        if ($role) {
             $user->assignRole($role->name);
         }
 
+        // Redirect to the users index page with a success message
         return redirect()->route('users.index')
-                ->withSuccess('New user is added successfully.');
+                        ->withSuccess('New user is added successfully.');
     }
+
 
     /**
      * Display the specified resource.
@@ -125,38 +151,63 @@ class UserController extends Controller
         $roles = Role::all();
         $userRole = $user->roles->first();
 
+        $permissions = Permission::all();
+        $userPermissions = $user->permissions->pluck('id')->toArray();
+
         return view('users.edit', [
             'user' => $user,
             'roles' => $roles,
-            'userRole' => $userRole
+            'userRole' => $userRole,
+            'permissions' => $permissions,   // Ensure this is passed
+            'userPermissions' => $userPermissions,
         ]);
     }
+
 
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
-        $input = $request->all();
+        // Validate the request
+        $request->validate([
+            'name' => 'required|unique:roles,name,' . $request->role_id,
+            'permission' => 'required|array',
+        ]);
 
-        if (!empty($request->password)) {
+        // Prepare the input data, handling the password separately
+        $input = $request->except(['password']);
+        if ($request->filled('password')) {
             $input['password'] = Hash::make($request->password);
-        } else {
-            $input = $request->except('password');
         }
 
+        // Update the user's information
         $user->update($input);
 
         // Fetch the role using the Role model
         $role = Role::find($request->role_id);
         if ($role) {
-            $user->syncRoles([$role]); // Ensure correct role synchronization
+            // Update the role name
+            $role->update(['name' => $request->name]);
+
+            // Determine which permissions to assign to the role
+            if (in_array('all', $request->input('permission'))) {
+                $permissions = Permission::all();
+            } else {
+                $permissions = Permission::whereIn('id', $request->input('permission'))->get();
+            }
+
+            // Sync the role's permissions
+            $role->syncPermissions($permissions);
+
+            // Synchronize the user's roles
+            $user->syncRoles([$role->name]);
         }
 
+        // Redirect back with a success message
         return redirect()->route('users.index')
-                ->withSuccess('User updated successfully');
+                         ->withSuccess('User updated successfully');
     }
-
 
     /**
      * Remove the specified resource from storage.

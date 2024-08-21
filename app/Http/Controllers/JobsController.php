@@ -131,14 +131,13 @@ class JobsController extends Controller
         $job->slug = Str::slug($request->title . '_' . $job->id);
         $job->save();
 
-        Redis::set('job_listing_' . $job->id, json_encode($job->toArray()), 'EX', 30);
+        Redis::setex('job_listing_' . $job->id, 3660, json_encode($job->toArray()));
 
-        // // Optionally log the job data
-        // $jobData = Redis::get('job_listing_' . $job->id);
         // logger($jobData);
 
         return redirect()->route('jobs.index')->with('success', 'Job created successfully.');
     }
+
 
 
     public function edit(JobListing $job)
@@ -173,10 +172,17 @@ class JobsController extends Controller
 
     public function destroy(JobListing $job)
     {
-        $job->delete();
+        // Delete the cache entry
+        Redis::del('job_listing_' . $job->id);
 
+        // Check the Redis cache entry after deletion
+        // $cachedJobAfter = Redis::get('job_listing_' . $job->id);
+        // dd('After deletion:', $cachedJobAfter);
+
+        $job->delete();
         return redirect()->route('jobs.index')->with('success', 'Job deleted successfully.');
     }
+
 
     public function status(JobListing $job)
     {
