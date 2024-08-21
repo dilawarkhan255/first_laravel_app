@@ -96,42 +96,49 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUserRequest $request): RedirectResponse
-    {
-        // Validate the request
-        $this->validate($request, [
-            'name' => 'required|unique:roles,name',
-            'permission' => 'required|array',
-        ]);
+ public function store(StoreUserRequest $request): RedirectResponse
+{
+    // Validate the request
+    $this->validate($request, [
+        'name' => 'required|string|max:255|unique:users,name',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|string|confirmed|min:6',
+        'role_id' => 'required|exists:roles,id',
+        'permission' => 'nullable|array',
+    ]);
 
-        // Create a new role
-        $role = Role::create(['name' => $request->input('name')]);
+    // Prepare the input data, including the parent ID
+    $input = $request->all();
+    $input['password'] = Hash::make($request->password);
+    $input['parent_id'] = auth()->user()->id; // Capture the parent ID
 
-        // Determine which permissions to assign to the role
+    // Create a new user
+    $user = User::create($input);
+
+    // Assign the role to the user
+    $role = Role::find($request->role_id);
+    if ($role) {
+        $user->assignRole($role->name);
+    }
+
+    // Determine which permissions to assign to the role
+    if ($request->filled('permission')) {
         if (in_array('all', $request->input('permission'))) {
             $permissions = Permission::all();
         } else {
             $permissions = Permission::whereIn('id', $request->input('permission'))->get();
         }
 
-        // Sync the role's permissions
+        // Sync the role's permissions if any were selected
         $role->syncPermissions($permissions);
-
-        // Create a new user
-        $input = $request->all();
-        $input['password'] = Hash::make($request->password);
-        $user = User::create($input);
-
-        // Assign the role to the user, if applicable
-        $role = Role::find($request->role_id);
-        if ($role) {
-            $user->assignRole($role->name);
-        }
-
-        // Redirect to the users index page with a success message
-        return redirect()->route('users.index')
-                        ->withSuccess('New user is added successfully.');
     }
+
+    // Redirect to the users index page with a success message
+    return redirect()->route('users.index')
+                     ->withSuccess('New user added successfully.');
+}
+
+
 
 
     /**
