@@ -58,12 +58,12 @@ class User extends Authenticatable implements MustVerifyEmail
                     ->withTimestamps();
     }
 
-    public function parent()
+    public function children()
     {
         return $this->belongsTo(User::class, 'parent_id');
     }
 
-    public function children()
+    public function parent()
     {
         return $this->hasMany(User::class, 'parent_id');
     }

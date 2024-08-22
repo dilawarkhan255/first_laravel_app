@@ -17,15 +17,52 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class JobsController extends Controller
 {
-    function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware(['permission:jobs|create-jobs|edit-jobs|delete-jobs'], ['only' => ['index', 'show']]);
-        $this->middleware(['permission:create-jobs'], ['only' => ['create', 'store']]);
-        $this->middleware(['permission:edit-jobs'], ['only' => ['edit', 'update']]);
-        $this->middleware(['permission:view-jobs'], ['only' => ['show']]);
-        $this->middleware(['permission:delete-jobs'], ['only' => ['destroy']]);
-    }
+    public function __construct()
+{
+    $this->middleware('auth');
+
+    $this->middleware(function ($request, $next) {
+        $user = auth()->user();
+
+        if ($user) {
+            $userPermissions = $user->getDirectPermissions()->pluck('name')->toArray();
+
+            $rolePermissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+            $allPermissions = array_unique(array_merge($userPermissions, $rolePermissions));
+
+            if (in_array('jobs', $allPermissions) || array_intersect(['create-jobs', 'edit-jobs', 'delete-jobs'], $allPermissions)) {
+                $this->middleware('permission:jobs|create-jobs|edit-jobs|delete-jobs', ['only' => ['index', 'show']]);
+            }
+
+            if (in_array('create-jobs', $allPermissions)) {
+                $this->middleware('permission:create-jobs', ['only' => ['create', 'store']]);
+            }
+
+            if (in_array('edit-jobs', $allPermissions)) {
+                $this->middleware('permission:edit-jobs', ['only' => ['edit', 'update']]);
+            }
+
+            if (in_array('view-jobs', $allPermissions)) {
+                $this->middleware('permission:view-jobs', ['only' => ['show']]);
+            }
+
+            if (in_array('delete-jobs', $allPermissions)) {
+                $this->middleware('permission:delete-jobs', ['only' => ['destroy']]);
+            }
+
+            // Optionally, deny access to all actions if no relevant permissions are present
+            if (empty(array_intersect(['jobs', 'create-jobs', 'edit-jobs', 'delete-jobs', 'view-jobs'], $allPermissions))) {
+                abort(403, 'Unauthorized action.');
+            }
+        } else {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return $next($request); // Proceed with the request
+    });
+}
+
 
     // public function index(Job_ListingDataTable $dataTable)
     // {

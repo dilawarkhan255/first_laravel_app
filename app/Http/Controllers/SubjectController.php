@@ -12,13 +12,47 @@ use Illuminate\Support\Facades\Session;
 class SubjectController extends Controller
 {
 
-    function __construct()
-    {
-         $this->middleware('permission:subjects|create-subjects|edit-subjects|delete-subjects', ['only' => ['index','store']]);
-         $this->middleware('permission:create-subjects', ['only' => ['create','store']]);
-         $this->middleware('permission:edit-subjects', ['only' => ['edit','update']]);
-         $this->middleware('permission:delete-subjects', ['only' => ['destroy']]);
-    }
+    public function __construct()
+{
+    $this->middleware('auth');
+
+    $this->middleware(function ($request, $next) {
+        $user = auth()->user();
+
+        if ($user) {
+
+            $userPermissions = $user->getDirectPermissions()->pluck('name')->toArray();
+
+            $rolePermissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+            $allPermissions = array_unique(array_merge($userPermissions, $rolePermissions));
+
+            if (in_array('subjects', $allPermissions) || in_array('create-subjects', $allPermissions)) {
+                $this->middleware('permission:subjects|create-subjects|edit-subjects|delete-subjects', ['only' => ['index', 'store']]);
+            }
+
+            if (in_array('create-subjects', $allPermissions)) {
+                $this->middleware('permission:create-subjects', ['only' => ['create', 'store']]);
+            }
+
+            if (in_array('edit-subjects', $allPermissions)) {
+                $this->middleware('permission:edit-subjects', ['only' => ['edit', 'update']]);
+            }
+
+            if (in_array('delete-subjects', $allPermissions)) {
+                $this->middleware('permission:delete-subjects', ['only' => ['destroy']]);
+            }
+
+            // Optionally, deny access to all actions if no relevant permissions are present
+            if (empty(array_intersect(['subjects', 'create-subjects', 'edit-subjects', 'delete-subjects'], $allPermissions))) {
+                abort(403, 'Unauthorized action.');
+            }
+        }
+
+        return $next($request); // Proceed with the request
+    });
+}
+
 
     public function index(Request $request)
     {

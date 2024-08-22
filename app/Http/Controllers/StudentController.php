@@ -11,13 +11,47 @@ use Illuminate\Support\Facades\Session;
 
 class StudentController extends Controller
 {
-    function __construct()
-    {
-         $this->middleware('permission:students|create-students|edit-students|delete-students', ['only' => ['index','store']]);
-         $this->middleware('permission:create-students', ['only' => ['create','store']]);
-         $this->middleware('permission:edit-students', ['only' => ['edit','update']]);
-         $this->middleware('permission:delete-students', ['only' => ['destroy']]);
-    }
+    public function __construct()
+{
+    $this->middleware('auth');
+
+    $this->middleware(function ($request, $next) {
+        $user = auth()->user();
+
+        if ($user) {
+
+            $userPermissions = $user->getDirectPermissions()->pluck('name')->toArray();
+
+            $rolePermissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+            $allPermissions = array_unique(array_merge($userPermissions, $rolePermissions));
+
+            if (in_array('create-students', $allPermissions)) {
+                $this->middleware('permission:create-students', ['only' => ['create', 'store']]);
+            }
+
+            if (in_array('edit-students', $allPermissions)) {
+                $this->middleware('permission:edit-students', ['only' => ['edit', 'update']]);
+            }
+
+            if (in_array('delete-students', $allPermissions)) {
+                $this->middleware('permission:delete-students', ['only' => ['destroy']]);
+            }
+
+            if (in_array('students', $allPermissions) ||
+                array_intersect(['create-students', 'edit-students', 'delete-students'], $allPermissions)) {
+                $this->middleware('permission:students|create-students|edit-students|delete-students', ['only' => ['index']]);
+            } else {
+                abort(403, 'Unauthorized action.');
+            }
+        } else {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return $next($request); // Proceed with the request
+    });
+}
+
 
 // public function index()
 // {

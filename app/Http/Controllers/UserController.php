@@ -18,14 +18,46 @@ use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
-    function __construct()
+    public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:list-users|create-users|edit-users|delete-users');
-        $this->middleware('permission:create-users');
-        $this->middleware('permission:edit-users');
-        $this->middleware('permission:delete-users');
+
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+
+            if ($user) {
+
+                $userPermissions = $user->getDirectPermissions()->pluck('name')->toArray();
+
+                $rolePermissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+                $allPermissions = array_unique(array_merge($userPermissions, $rolePermissions));
+
+                if (in_array('list-users', $allPermissions)) {
+                    $this->middleware('permission:list-users', ['only' => ['index']]);
+                }
+
+                if (in_array('create-users', $allPermissions)) {
+                    $this->middleware('permission:create-users', ['only' => ['create', 'store']]);
+                }
+
+                if (in_array('edit-users', $allPermissions)) {
+                    $this->middleware('permission:edit-users', ['only' => ['edit', 'update']]);
+                }
+
+                if (in_array('delete-users', $allPermissions)) {
+                    $this->middleware('permission:delete-users', ['only' => ['destroy']]);
+                }
+
+                if (empty(array_intersect(['list-users', 'create-users', 'edit-users', 'delete-users'], $allPermissions))) {
+                    abort(403, 'Unauthorized action.');
+                }
+            }
+
+            return $next($request);
+        });
     }
+
 
     public function uploadImage(Request $request)
     {
@@ -48,7 +80,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = User::with('roles')->get();
+            $data = User::where('parent_id',auth()->user()->id)->with('roles')->get();
             return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('roles', function($user) {
@@ -76,9 +108,7 @@ class UserController extends Controller
                 ->make(true);
         }
 
-        return view('users.index', [
-            'users' => User::latest('id')->paginate(3)
-        ]);
+        return view('users.index');
     }
 
     /**
@@ -96,50 +126,42 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
- public function store(StoreUserRequest $request): RedirectResponse
-{
-    // Validate the request
-    $this->validate($request, [
-        'name' => 'required|string|max:255|unique:users,name',
-        'email' => 'required|email|unique:users,email',
-        'password' => 'required|string|confirmed|min:6',
-        'role_id' => 'required|exists:roles,id',
-        'permission' => 'nullable|array',
-    ]);
+    public function store(StoreUserRequest $request): RedirectResponse
+    {
+        // Validate the request (already handled by StoreUserRequest)
+        $validatedData = $request->validated();
 
-    // Prepare the input data, including the parent ID
-    $input = $request->all();
-    $input['password'] = Hash::make($request->password);
-    $input['parent_id'] = auth()->user()->id; // Capture the parent ID
+        // Prepare the input data, including the parent ID
+        $input = $request->all();
+        $input['password'] = Hash::make($request->password);
+        $input['parent_id'] = auth()->user()->id; // Capture the parent ID
 
-    // Create a new user
-    $user = User::create($input);
+        // Create a new user
+        $user = User::create($input);
 
-    // Assign the role to the user
-    $role = Role::find($request->role_id);
-    if ($role) {
-        $user->assignRole($role->name);
-    }
-
-    // Determine which permissions to assign to the role
-    if ($request->filled('permission')) {
-        if (in_array('all', $request->input('permission'))) {
-            $permissions = Permission::all();
-        } else {
-            $permissions = Permission::whereIn('id', $request->input('permission'))->get();
+        // Assign the role to the user
+        $role = Role::find($request->role_id);
+        if ($role) {
+            $user->assignRole($role->name);
         }
 
-        // Sync the role's permissions if any were selected
-        $role->syncPermissions($permissions);
+        // Assign permissions to the user
+        if ($request->filled('permission')) {
+            // Fetch selected permissions or select all if 'all' is chosen
+            if (in_array('all', $request->input('permission'))) {
+                $permissions = Permission::all();
+            } else {
+                $permissions = Permission::whereIn('id', $request->input('permission'))->get();
+            }
+
+            // Sync the user's permissions if any were selected
+            $user->syncPermissions($permissions);
+        }
+
+        // Redirect to the users index page with a success message
+        return redirect()->route('users.index')
+                         ->withSuccess('New user added successfully.');
     }
-
-    // Redirect to the users index page with a success message
-    return redirect()->route('users.index')
-                     ->withSuccess('New user added successfully.');
-}
-
-
-
 
     /**
      * Display the specified resource.
@@ -165,11 +187,10 @@ class UserController extends Controller
             'user' => $user,
             'roles' => $roles,
             'userRole' => $userRole,
-            'permissions' => $permissions,   // Ensure this is passed
+            'permissions' => $permissions,
             'userPermissions' => $userPermissions,
         ]);
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -178,12 +199,14 @@ class UserController extends Controller
     {
         // Validate the request
         $request->validate([
-            'name' => 'required|unique:roles,name,' . $request->role_id,
-            'permission' => 'required|array',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'role_id' => 'required|exists:roles,id',
+            // 'permissions' validation rule removed
         ]);
 
         // Prepare the input data, handling the password separately
-        $input = $request->except(['password']);
+        $input = $request->except(['password', 'permissions']);
         if ($request->filled('password')) {
             $input['password'] = Hash::make($request->password);
         }
@@ -191,24 +214,18 @@ class UserController extends Controller
         // Update the user's information
         $user->update($input);
 
-        // Fetch the role using the Role model
+        // Update the user's role
         $role = Role::find($request->role_id);
         if ($role) {
-            // Update the role name
-            $role->update(['name' => $request->name]);
-
-            // Determine which permissions to assign to the role
-            if (in_array('all', $request->input('permission'))) {
-                $permissions = Permission::all();
-            } else {
-                $permissions = Permission::whereIn('id', $request->input('permission'))->get();
-            }
-
-            // Sync the role's permissions
-            $role->syncPermissions($permissions);
-
-            // Synchronize the user's roles
             $user->syncRoles([$role->name]);
+
+            // Update the user's permissions based on the selected role
+            if ($request->filled('permissions')) {
+                $permissions = Permission::whereIn('id', $request->input('permissions'))->get();
+                $user->syncPermissions($permissions);
+            } else {
+                $user->syncPermissions([]); // Clear all permissions if none are selected
+            }
         }
 
         // Redirect back with a success message

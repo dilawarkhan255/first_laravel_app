@@ -9,15 +9,51 @@ use Yajra\DataTables\Facades\DataTables;
 
 class JobDesignationController extends Controller
 {
-    function __construct()
+    public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware(['permission:designations|create-designations|edit-designations|delete-designations'], ['only' => ['index', 'show']]);
-        $this->middleware(['permission:create-designations'], ['only' => ['create', 'store']]);
-        $this->middleware(['permission:edit-designations'], ['only' => ['edit', 'update']]);
-        $this->middleware(['permission:show-designations'], ['only' => ['show']]);
-        $this->middleware(['permission:delete-designations'], ['only' => ['destroy']]);
+
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+
+            if ($user) {
+                $userPermissions = $user->getDirectPermissions()->pluck('name')->toArray();
+
+                $rolePermissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+                $allPermissions = array_unique(array_merge($userPermissions, $rolePermissions));
+
+                if (in_array('create-designations', $allPermissions)) {
+                    $this->middleware('permission:create-designations', ['only' => ['create', 'store']]);
+                }
+
+                if (in_array('edit-designations', $allPermissions)) {
+                    $this->middleware('permission:edit-designations', ['only' => ['edit', 'update']]);
+                }
+
+                if (in_array('show-designations', $allPermissions)) {
+                    $this->middleware('permission:show-designations', ['only' => ['show']]);
+                }
+
+                if (in_array('delete-designations', $allPermissions)) {
+                    $this->middleware('permission:delete-designations', ['only' => ['destroy']]);
+                }
+
+                if (in_array('designations', $allPermissions) ||
+                    array_intersect(['create-designations', 'edit-designations', 'delete-designations'], $allPermissions)) {
+                    $this->middleware('permission:designations|create-designations|edit-designations|delete-designations', ['only' => ['index']]);
+                } else {
+                    abort(403, 'Unauthorized action.');
+                }
+            } else {
+                abort(403, 'Unauthorized action.');
+            }
+
+            return $next($request);
+        });
     }
+
+
 
     // public function index()
     // {

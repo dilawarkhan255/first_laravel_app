@@ -9,13 +9,51 @@ use Yajra\DataTables\Facades\DataTables;
 
 class RoleController extends Controller
 {
-    function __construct()
+    public function __construct()
     {
-         $this->middleware('permission:roles|create-roles|edit-roles|delete-roles', ['only' => ['index','store']]);
-         $this->middleware('permission:create-roles', ['only' => ['create','store']]);
-         $this->middleware('permission:edit-roles', ['only' => ['edit','update']]);
-         $this->middleware('permission:delete-roles', ['only' => ['destroy']]);
+
+        $this->middleware('auth');
+
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+
+            if ($user) {
+                $userPermissions = $user->getAllPermissions()->pluck('name')->toArray();
+
+                $userRoles = $user->roles;
+
+                if ($userRoles->isNotEmpty()) {
+                    $rolePermissions = $userRoles->map->permissions->flatten()->pluck('name')->unique()->toArray();
+                } else {
+                    $rolePermissions = [];
+                }
+
+                $allPermissions = array_merge($userPermissions, $rolePermissions);
+
+                if (in_array('create-roles', $allPermissions)) {
+                    $this->middleware('permission:create-roles', ['only' => ['create', 'store']]);
+                }
+
+                if (in_array('edit-roles', $allPermissions)) {
+                    $this->middleware('permission:edit-roles', ['only' => ['edit', 'update']]);
+                }
+
+                if (in_array('delete-roles', $allPermissions)) {
+                    $this->middleware('permission:delete-roles', ['only' => ['destroy']]);
+                }
+
+                if (in_array('roles', $allPermissions)) {
+                    $this->middleware('permission:roles', ['only' => ['index', 'store']]);
+                } else {
+                    // Deny access to 'index' and 'store' if no role-related permissions are present
+                    abort(403, 'Unauthorized action.');
+                }
+            }
+
+            return $next($request);
+        });
     }
+
 
     public function index(Request $request)
     {
@@ -90,20 +128,27 @@ class RoleController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:roles,name,' . $role->id,
-            'permission' => 'required|array',
+            // Remove required from validation as requested
+            // 'permission' => 'array',
         ]);
 
         $role->update(['name' => $request->name]);
 
-        if (in_array('all', $request->input('permission'))) {
+        // Ensure 'permission' is always an array
+        $permissionsInput = $request->input('permission', []);
+
+        // Check if 'all' is in the permissions input
+        if (in_array('all', $permissionsInput)) {
             $permissions = Permission::all();
         } else {
-            $permissions = Permission::whereIn('id', $request->input('permission'))->get();
+            $permissions = Permission::whereIn('id', $permissionsInput)->get();
         }
+
         $role->syncPermissions($permissions);
 
         return redirect()->route('roles.index')->with('success', 'Role updated successfully.');
     }
+
 
     public function destroy(Role $role)
     {

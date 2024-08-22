@@ -8,6 +8,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Display Errors -->
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
@@ -18,6 +19,7 @@
         </div>
     @endif
 
+    <!-- User Edit Form -->
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -26,7 +28,7 @@
                     <a href="{{ route('users.index') }}" class="btn btn-primary btn-sm">&larr; Back</a>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('users.update', $user->id) }}" method="post">
+                    <form action="{{ route('users.update', $user->id) }}" method="POST">
                         @csrf
                         @method('PUT')
 
@@ -56,13 +58,16 @@
                         <div class="mb-3 row">
                             <label for="role_id" class="col-md-4 col-form-label text-md-end mb-1">Role</label>
                             <div class="col-md-8">
-                                <select class="form-control" name="role_id" id="role">
+                                <select class="form-control @error('role_id') is-invalid @enderror" name="role_id" id="role_id">
                                     @foreach ($roles as $role)
                                         <option value="{{ $role->id }}" {{ $role->id == $userRole->id ? 'selected' : '' }}>
                                             {{ $role->name }}
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('role_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -82,7 +87,7 @@
                                     @foreach ($permissions as $permission)
                                         <div class="col-md-4 mb-2">
                                             <div class="form-check d-flex align-items-center">
-                                                <input type="checkbox" class="form-check-input" id="permission_{{ $permission->id }}" name="permissions[]" value="{{ $permission->id }}"
+                                                <input type="checkbox" class="form-check-input permission-checkbox" id="permission_{{ $permission->id }}" name="permissions[]" value="{{ $permission->id }}"
                                                     {{ in_array($permission->id, $userPermissions) ? 'checked' : '' }}>
                                                 <label class="form-check-label ms-2 text-truncate" for="permission_{{ $permission->id }}">
                                                     <span class="badge badge-primary">{{ $permission->name }}</span>
@@ -94,9 +99,10 @@
                             </div>
                         </div>
 
+                        <!-- Submit Button -->
                         <div class="mb-3 row">
                             <div class="col-md-8 offset-md-4">
-                                <input type="submit" class="btn btn-primary" value="Update User">
+                                <button type="submit" class="btn btn-primary">Update User</button>
                             </div>
                         </div>
 
@@ -106,15 +112,24 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         function toggleCheckboxes(selectAllCheckbox) {
-            const checkboxes = document.querySelectorAll('input[name="permissions[]"]');
+            const checkboxes = document.querySelectorAll('.permission-checkbox');
             checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
         }
+
+        // Ensure "Select All" behaves as expected when individual checkboxes are toggled
+        document.querySelectorAll('.permission-checkbox').forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                const selectAllCheckbox = document.getElementById('select-all');
+                const allChecked = document.querySelectorAll('.permission-checkbox:checked').length === document.querySelectorAll('.permission-checkbox').length;
+                selectAllCheckbox.checked = allChecked;
+            });
+        });
     </script>
 
 </x-layout>

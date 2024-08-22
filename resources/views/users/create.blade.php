@@ -98,7 +98,7 @@
                                     @foreach ($permissions as $permission)
                                         <div class="col-md-4 mb-2">
                                             <div class="form-check d-flex align-items-center">
-                                                <input type="checkbox" class="form-check-input" id="permission_{{ $permission->id }}" name="permission[]" value="{{ $permission->id }}">
+                                                <input type="checkbox" class="form-check-input permission-checkbox" id="permission_{{ $permission->id }}" name="permission[]" value="{{ $permission->id }}">
                                                 <label class="form-check-label ms-2 text-truncate" for="permission_{{ $permission->id }}">
                                                     <span class="badge badge-primary">{{ $permission->name }}</span>
                                                 </label>
@@ -108,7 +108,6 @@
                                 </div>
                             </div>
                         </div>
-
 
                         <div class="mb-3 row">
                             <div class="col-md-8 offset-md-4">
@@ -128,9 +127,20 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         function toggleCheckboxes(selectAllCheckbox) {
-            const checkboxes = document.querySelectorAll('input[name="permissions[]"]');
-            checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
+            const checkboxes = document.querySelectorAll('.permission-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
         }
+
+        // To update the Select All checkbox based on individual checkboxes
+        const permissionCheckboxes = document.querySelectorAll('.permission-checkbox');
+        permissionCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const allChecked = Array.from(permissionCheckboxes).every(checkbox => checkbox.checked);
+                document.getElementById('select-all').checked = allChecked;
+            });
+        });
     </script>
 
 </x-layout>
