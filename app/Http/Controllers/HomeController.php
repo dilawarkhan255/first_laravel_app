@@ -11,9 +11,14 @@ class HomeController extends Controller
 {
     public function home()
     {
-        $jobs = JobListing::where('status', '1')
-            ->orderBy('created_at', 'desc')
-            ->take(6)->get();
+        $query = JobListing::where('status', '1');
+
+        // Admins see all jobs; non-admins see only their own
+        if (!Auth::user()->hasRole('Admin')) {
+            $query->where('user_id', Auth::id());
+        }
+
+        $jobs = $query->orderBy('created_at', 'desc')->take(6)->get();
         return view('home/home', compact('jobs'));
     }
 
@@ -24,6 +29,10 @@ class HomeController extends Controller
 
         if (!$job) {
             abort(404, 'Job not found.');
+        }
+
+        if (!Auth::user()->hasRole('Admin') && $job->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized access to this job.');
         }
 
         $favouriteJobs = collect();
@@ -41,13 +50,16 @@ class HomeController extends Controller
         ]);
     }
 
-
     public function view_job(Request $request)
     {
         $search = $request->input('search');
         View::share('search_job', $search);
 
         $query = JobListing::with('designation')->where('status', '1');
+
+        if (!Auth::user()->hasRole('Admin')) {
+            $query->where('user_id', Auth::id());
+        }
 
         if ($search) {
             $query->where(function ($query) use ($search) {
@@ -72,6 +84,10 @@ class HomeController extends Controller
         $search = $request->input('search');
 
         $query = JobListing::with('designation')->where('status', '1');
+
+        if (!Auth::user()->hasRole('Admin')) {
+            $query->where('user_id', Auth::id());
+        }
 
         if ($search) {
             $query->where(function ($query) use ($search) {
@@ -99,15 +115,4 @@ class HomeController extends Controller
             'all_loaded' => $all_loaded
         ]);
     }
-
-    // public function search(Request $request)
-    // {
-    //     $search = $request->input('search');
-    //     $results = JobListing::where('title', 'like', "%$search%")
-    //                           ->where('status', 'enabled')
-    //                           ->orderBy('created_at', 'desc')
-    //                           ->get();
-    //     return view('view_job', ['jobs' => $results, 'totalJobs' => $results->count()]);
-    // }
-
 }

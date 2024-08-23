@@ -77,6 +77,7 @@ class JobsController extends Controller
         $titles = JobListing::pluck('title')->unique()->sort()->values();
 
         if ($request->ajax()) {
+
             $query = JobListing::with('designation');
 
             if ($request->has('title') && $request->title != '') {
@@ -162,15 +163,14 @@ class JobsController extends Controller
             'designation_id' => 'required'
         ]);
 
+        $validatedData['user_id'] = auth()->id();
         $validatedData['slug'] = 'dummy';
         $job = JobListing::create($validatedData);
 
         $job->slug = Str::slug($request->title . '_' . $job->id);
         $job->save();
 
-        Redis::setex('job_listing_' . $job->id, 3660, json_encode($job->toArray()));
-
-        // logger($jobData);
+        Redis::setex('job_listing_' . $job->id, 60, json_encode($job->toArray()));
 
         return redirect()->route('jobs.index')->with('success', 'Job created successfully.');
     }
