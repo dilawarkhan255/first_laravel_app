@@ -143,9 +143,6 @@ class JobsController extends Controller
         return view('jobs.show', ['job' => $job]);
     }
 
-
-
-
     public function create(JobListing $job)
     {
         $designations = JobDesignation::all();

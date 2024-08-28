@@ -34,7 +34,6 @@
     </a>
   </div>
 
-
     <!-- Card Section -->
     <section class="container mt-5 mb-5">
         <div class="row">
@@ -61,6 +60,21 @@
                 </div>
             @endforeach
         </div>
+    </section>
+       <!-- Form Section -->
+    <section class="container mt-5 mb-5">
+        <form action="{{ route('send.emails') }}" method="POST">
+            @csrf
+            <div class="mb-3">
+                <label for="subject" class="form-label">Subject</label>
+                <input type="text" id="subject" name="subject" class="form-control" placeholder="Enter Subject" required>
+            </div>
+            <div class="mb-3">
+                <label for="message" class="form-label">Message</label>
+                <textarea id="message" name="message" class="form-control" rows="4" placeholder="Enter Message" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Send Emails</button>
+        </form>
     </section>
 @endsection
 

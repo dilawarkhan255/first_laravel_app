@@ -28,12 +28,17 @@ use Laravel\Socialite\Facades\Socialite;
 
     //Login\Resgistration Route
     Auth::routes(['verify' => true]);
+    // Route::middleware(['throttle:global'])->group(function () {
+    //     Auth::routes(['verify' => true]);
+    // });
+
 
     //Home Routes
     Route::get('/', [HomeController::class, 'home'])->name('home');
     Route::get('/home/job/{slug}', [HomeController::class, 'job_details'])->name('job_details');
     Route::get('/home/view_job', [HomeController::class, 'view_job'])->name('view_job');
     Route::post('/load-more-jobs', [HomeController::class, 'loadmorejobs'])->name('loadmorejobs');
+    Route::post('/send-emails', [HomeController::class, 'sendEmailToUsers'])->name('send.emails');
 
 
 Route::middleware('auth')->group(function () {
@@ -46,7 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'home'])->name('dashboard.home');
     Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
     Route::get('/jobs/create', [JobsController::class, 'create'])->name('jobs.create');
-    Route::post('/jobs', [JobsController::class, 'store'])->name('jobs.store');
+    Route::post('/jobs', [JobsController::class, 'store'])->name('jobs.store')->middleware(['throttle:global']);
     Route::get('/jobs/{job}/edit', [JobsController::class, 'edit'])->name('jobs.edit');
     Route::put('/jobs/{job}', [JobsController::class, 'update'])->name('jobs.update');
     Route::get('/jobs/{job}', [JobsController::class, 'show'])->name('jobs.show');
@@ -55,7 +60,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/search', [JobsController::class, 'search'])->name('search');
 
     //import export & Pdf Routes
-    Route::get('/export', [JobsController::class, 'export'])->name('jobs.export');
+    Route::get('/export', [JobsController::class, 'export'])->name('jobs.export')->middleware(['throttle:global']);
     Route::post('/import', [JobsController::class,'import'])->name('jobs.import');
     Route::get('pdf/generate-pdf', [PDFController::class, 'generatePDF'])->name('pdf.generatePDF');
 
@@ -87,7 +92,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy'])->name('subjects.destroy');
 
     // routes Assign/UnAssign Subjects
-    Route::post('/students/assign-subjects', [StudentController::class, 'assignSubjects'])->name('assign.subjects');
+    Route::post('/students/assign-subjects', [StudentController::class, 'assignSubjects'])->name('assign.subjects')->middleware(['throttle:global']);
     Route::post('students/unassign-subjects', [StudentController::class, 'unassignSubjects'])->name('unassign.subjects');
     Route::get('/students/{id}/available-subjects', [StudentController::class, 'getAvailableSubjects'])->name('get.available.subjects');
     //Routes Assign/UnAssign subjects

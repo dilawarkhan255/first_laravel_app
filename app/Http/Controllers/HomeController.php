@@ -2,23 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SendMailEvent;
 use Illuminate\Http\Request;
 use App\Models\JobListing;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 
+
 class HomeController extends Controller
 {
-    public function home()
+    // public function home()
+    // {
+    //     $query = JobListing::where('status', '1');
+
+    //     if (Auth::check() && Auth::user()->hasRole('Admin')) {
+    //         // Admins see all jobs
+    //     } else {
+    //         // Non-admins see only their own
+    //         $query->where('user_id', Auth::id());
+    //     }
+
+    //     $jobs = $query->orderBy('created_at', 'desc')->take(6)->get();
+    //     return view('home/home', compact('jobs'));
+    // }
+
+        public function home()
     {
         $query = JobListing::where('status', '1');
 
-        // Admins see all jobs; non-admins see only their own
-        if (!Auth::user()->hasRole('Admin')) {
-            $query->where('user_id', Auth::id());
-        }
-
+        // Show all jobs without restricting by user ID or role
         $jobs = $query->orderBy('created_at', 'desc')->take(6)->get();
+
         return view('home/home', compact('jobs'));
     }
 
@@ -31,12 +46,15 @@ class HomeController extends Controller
             abort(404, 'Job not found.');
         }
 
-        if (!Auth::user()->hasRole('Admin') && $job->user_id !== Auth::id()) {
+        // If a user is logged in, check if they are allowed to view this job's details
+        if (Auth::check() && !Auth::user()->hasRole('Admin') && $job->user_id !== Auth::id()) {
             abort(403, 'Unauthorized access to this job.');
         }
 
+        // Initialize favouriteJobs as an empty collection
         $favouriteJobs = collect();
 
+        // Only fetch favourite jobs if the user is logged in
         if (Auth::check()) {
             $user = Auth::user();
             $favouriteJobs = $user->favouriteJobs()
@@ -50,6 +68,7 @@ class HomeController extends Controller
         ]);
     }
 
+
     public function view_job(Request $request)
     {
         $search = $request->input('search');
@@ -57,8 +76,13 @@ class HomeController extends Controller
 
         $query = JobListing::with('designation')->where('status', '1');
 
-        if (!Auth::user()->hasRole('Admin')) {
-            $query->where('user_id', Auth::id());
+        if (Auth::check()) {
+            if (!Auth::user()->hasRole('Admin')) {
+                $query->where('user_id', Auth::id());
+            }
+        } else {
+            // Optionally, handle unauthenticated users here, like showing no results or a message
+            $query->where('user_id', null); // This will return no jobs
         }
 
         if ($search) {
@@ -77,6 +101,7 @@ class HomeController extends Controller
 
         return view('home/view_job', compact('jobs', 'totalJobs'));
     }
+
 
     public function loadmorejobs(Request $request)
     {
@@ -114,5 +139,27 @@ class HomeController extends Controller
             'totalJobs' => $totalJobs,
             'all_loaded' => $all_loaded
         ]);
+    }
+
+    public function sendEmailToUsers(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
+        ]);
+
+        $subject = $request->input('subject');
+        $message = $request->input('message');
+
+        // Get all users or specific users based on your logic
+        $users = User::all(); // Or you could use a different query if needed
+
+        foreach ($users as $user) {
+            // Dispatch the event to send an email
+            event(new SendMailEvent($user, $subject, $message));
+        }
+
+        return redirect()->back()->with('status', 'Emails sent successfully!');
     }
 }
