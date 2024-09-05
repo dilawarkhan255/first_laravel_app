@@ -169,10 +169,20 @@ class JobsController extends Controller
 
         Redis::setex('job_listing_' . $job->id, 60, json_encode($job->toArray()));
 
+        activity()
+        ->performedOn($job)
+        ->causedBy(auth()->user())
+        ->withProperties([
+            'title' => $job->title,
+            'company' => $job->company,
+            'ip_address' => $request->ip(),
+            'referer' => $request->headers->get('referer'),
+            'response' => session('success'),
+        ])
+        ->log('Job created');
+
         return redirect()->route('jobs.index')->with('success', 'Job created successfully.');
     }
-
-
 
     public function edit(JobListing $job)
     {
@@ -200,6 +210,16 @@ class JobsController extends Controller
         }
 
         $job->update($validatedData);
+
+        activity()
+        ->performedOn($job)
+        ->causedBy(auth()->user())
+        ->withProperties([
+            'title' => $job->title,
+            'company' => $job->company,
+            'ip_address' => $request->ip(),
+        ])
+        ->log('Job updated');
 
         return redirect()->route('jobs.index')->with('success', 'Job updated successfully.');
     }
